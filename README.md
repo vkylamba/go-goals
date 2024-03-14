@@ -1,4 +1,4 @@
-# Welcome to Buffalo
+# Goals tracker built with Go
 
 Thank you for choosing Buffalo for your web development needs.
 
