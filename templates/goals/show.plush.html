@@ -1,0 +1,73 @@
+<div class="py-4 mb-2">
+  <h3 class="d-inline-block">Goal Details</h3>
+
+  <div class="float-end">
+    <%= linkTo(goalsPath(), {class: "btn btn-info"}) { %>
+      Back to all Goals
+    <% } %>
+    <%= linkTo(editGoalPath({ goal_id: goal.ID }), {class: "btn btn-warning", body: "Edit"}) %>
+    <%= linkTo(goalPath({ goal_id: goal.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+  </div>
+</div>
+
+
+
+<ul class="list-group mb-2 ">
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">User</label>
+    <p class="d-inline-block"><%= goal.User %></p>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Title</label>
+    <p class="d-inline-block"><%= goal.Title %></p>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Description</label>
+    <p class="d-inline-block"><%= goal.Description %></p>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">TargetDate</label>
+    <p class="d-inline-block"><%= goal.TargetDate %></p>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Priority</label>
+    <p class="d-inline-block"><%= goal.Priority %></p>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Tags</label>
+    <p class="d-inline-block"><%= goal.Tags %></p>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Active</label>
+    <p class="d-inline-block"><%= goal.Active %></p>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Public</label>
+    <p class="d-inline-block"><%= goal.Public %></p>
+  </li>
+
+
+</ul>

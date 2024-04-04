@@ -1,0 +1,6 @@
+- id: "goal.created.success"
+  translation: "Goal was successfully created."
+- id: "goal.updated.success"
+  translation: "Goal was successfully updated."
+- id: "goal.destroyed.success"
+  translation: "Goal was successfully destroyed."

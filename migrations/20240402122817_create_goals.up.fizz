@@ -1,0 +1,12 @@
+create_table("goals") {
+	t.Column("id", "uuid", {primary: true})
+	t.Column("user", "user", {})
+	t.Column("title", "string", {})
+	t.Column("description", "text", {null: true})
+	t.Column("target_date", "timestamp", {null: true})
+	t.Column("priority", "integer", {null: true})
+	t.Column("tags", "varchar[]", {})
+	t.Column("active", "bool", {null: true})
+	t.Column("public", "bool", {null: true})
+	t.Timestamps()
+}

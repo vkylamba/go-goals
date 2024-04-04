@@ -1,12 +1,12 @@
 ---
 development:
   dialect: "sqlite3"
-  database: /Users/vlamba/Downloads/open-source-fun/go_goals_go_goals_development.sqlite
+  database: go_goals_development.sqlite
 
 test:
   dialect: "sqlite3"
-  database: /Users/vlamba/Downloads/open-source-fun/go_goals_go_goals_test.sqlite
+  database: go_goals_test.sqlite
 
 production:
   dialect: "sqlite3"
-  database: /Users/vlamba/Downloads/open-source-fun/go_goals_go_goals_production.sqlite
+  database: go_goals_production.sqlite

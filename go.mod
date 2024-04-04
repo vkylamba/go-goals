@@ -8,9 +8,11 @@ require (
 	github.com/gobuffalo/envy v1.10.2
 	github.com/gobuffalo/grift v1.5.2
 	github.com/gobuffalo/middleware v1.0.0
+	github.com/gobuffalo/nulls v0.4.2
 	github.com/gobuffalo/pop/v6 v6.1.1
 	github.com/gobuffalo/suite/v4 v4.0.4
 	github.com/gobuffalo/validate/v3 v3.3.3
+	github.com/gobuffalo/x v0.1.0
 	github.com/gofrs/uuid v4.3.1+incompatible
 	github.com/unrolled/secure v1.14.0
 )
@@ -34,7 +36,6 @@ require (
 	github.com/gobuffalo/httptest v1.5.2 // indirect
 	github.com/gobuffalo/logger v1.0.7 // indirect
 	github.com/gobuffalo/meta v0.3.3 // indirect
-	github.com/gobuffalo/nulls v0.4.2 // indirect
 	github.com/gobuffalo/plush/v4 v4.1.18 // indirect
 	github.com/gobuffalo/refresh v1.13.3 // indirect
 	github.com/gobuffalo/tags/v3 v3.1.4 // indirect
@@ -55,6 +56,7 @@ require (
 	github.com/jmoiron/sqlx v1.3.5 // indirect
 	github.com/joho/godotenv v1.4.0 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
+	github.com/lib/pq v1.10.7 // indirect
 	github.com/luna-duclos/instrumentedsql v1.1.3 // indirect
 	github.com/mattn/go-colorable v0.1.9 // indirect
 	github.com/mattn/go-isatty v0.0.14 // indirect

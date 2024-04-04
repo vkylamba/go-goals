@@ -1,0 +1,33 @@
+<div class="py-4 mb-2">
+  <h3 class="d-inline-block">Goals</h3>
+  <div class="float-end">
+    <%= linkTo(newGoalsPath(), {class: "btn btn-primary"}) { %>
+      Create New Goal
+    <% } %>
+  </div>
+</div>
+
+<table class="table table-hover table-bordered">
+  <thead class="thead-light">
+    <th>User</th><th>Title</th><th>TargetDate</th><th>Priority</th><th>Tags</th><th>Active</th><th>Public</th>
+    <th>&nbsp;</th>
+  </thead>
+  <tbody>
+    <%= for (goal) in goals { %>
+      <tr>
+        <td class="align-middle"><%= goal.User %></td><td class="align-middle"><%= goal.Title %></td><td class="align-middle"><%= goal.TargetDate %></td><td class="align-middle"><%= goal.Priority %></td><td class="align-middle"><%= goal.Tags %></td><td class="align-middle"><%= goal.Active %></td><td class="align-middle"><%= goal.Public %></td>
+        <td>
+          <div class="float-end">
+            <%= linkTo(goalPath({ goal_id: goal.ID }), {class: "btn btn-info", body: "View"}) %>
+            <%= linkTo(editGoalPath({ goal_id: goal.ID }), {class: "btn btn-warning", body: "Edit"}) %>
+            <%= linkTo(goalPath({ goal_id: goal.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+          </div>
+        </td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+
+<div class="text-center">
+  <%= paginator(pagination) %>
+</div>

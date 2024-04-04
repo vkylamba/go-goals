@@ -10,3 +10,16 @@ CREATE TABLE IF NOT EXISTS "users" (
 "created_at" DATETIME NOT NULL,
 "updated_at" DATETIME NOT NULL
 );
+CREATE TABLE IF NOT EXISTS "goals" (
+"id" TEXT PRIMARY KEY,
+"user" user NOT NULL,
+"title" TEXT NOT NULL,
+"description" TEXT,
+"target_date" DATETIME,
+"priority" INTEGER,
+"tags" varchar[] NOT NULL,
+"active" bool,
+"public" bool,
+"created_at" DATETIME NOT NULL,
+"updated_at" DATETIME NOT NULL
+);
