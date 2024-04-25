@@ -1,0 +1,15 @@
+<div class="py-4 mb-2">
+  <h3 class="d-inline-block">Edit User</h3>
+  </br><label><%= user.ID %></label>
+
+  <div class="float-end">
+    <%= linkTo(usersPath(), {class: "btn btn-info"}) { %>
+      Back to all User
+    <% } %>
+    <%= linkTo(userPath({ user_id: user.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+  </div>
+</div>
+
+<%= formFor(user, {action: editUserPath({ user_id: user.ID }), method: "POST"}) { %>
+  <%= partial("users/form.html") %>
+<% } %>
