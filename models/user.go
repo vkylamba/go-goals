@@ -2,25 +2,32 @@ package models
 
 import (
 	"encoding/json"
+	"strings"
 	"time"
 
+	"github.com/gobuffalo/nulls"
 	"github.com/gobuffalo/pop/v6"
 	"github.com/gobuffalo/validate/v3"
 	"github.com/gobuffalo/validate/v3/validators"
 	"github.com/gofrs/uuid"
+	"github.com/pkg/errors"
+	"golang.org/x/crypto/bcrypt"
 )
 
-//User is a generated model from buffalo-auth, it serves as the base for username/password authentication.
+// User is a generated model from buffalo-auth, it serves as the base for username/password authentication.
 type User struct {
-	ID                   uuid.UUID `json:"id" db:"id"`
-	CreatedAt            time.Time `json:"created_at" db:"created_at"`
-	UpdatedAt            time.Time `json:"updated_at" db:"updated_at"`
-	Email                string    `json:"email" db:"email"`
-	PasswordHash         string    `json:"password_hash" db:"password_hash"`
+	ID           uuid.UUID `json:"id" db:"id"`
+	CreatedAt    time.Time `json:"created_at" db:"created_at"`
+	UpdatedAt    time.Time `json:"updated_at" db:"updated_at"`
+	Name         string    `json:"name" db:"name"`
+	Email        string    `json:"email" db:"email"`
+	PasswordHash string    `json:"password_hash" db:"password_hash"`
 
-	Password             string    `json:"-" db:"-"`
-	PasswordConfirmation string    `json:"-" db:"-"`
-    
+	Password             string     `json:"-" db:"-"`
+	PasswordConfirmation string     `json:"-" db:"-"`
+	IsSuperuser          nulls.Bool `json:"isSuperuser" db:"is_superuser"`
+	Active               nulls.Bool `json:"active" db:"active"`
+	Public               nulls.Bool `json:"public" db:"public"`
 }
 
 // Create wraps up the pattern of encrypting the password and

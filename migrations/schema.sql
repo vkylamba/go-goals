@@ -6,7 +6,10 @@ CREATE TABLE IF NOT EXISTS "users" (
 "id" TEXT PRIMARY KEY,
 "name" TEXT NOT NULL,
 "email" TEXT NOT NULL,
-"password" TEXT NOT NULL,
+"password_hash" TEXT NOT NULL,
+"is_superuser" bool,
+"active" bool,
+"public" bool,
 "created_at" DATETIME NOT NULL,
 "updated_at" DATETIME NOT NULL
 );
