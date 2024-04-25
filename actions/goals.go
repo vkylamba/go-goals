@@ -37,6 +37,24 @@ var PRIORITY_OPTIONS = PriorityOptions{
 	"High":   "high",
 }
 
+func setPageContextForGoals(c buffalo.Context) {
+	c.Set("priorityOptions", PRIORITY_OPTIONS)
+	userOptions := make(map[string]string)
+	userIdsToNameMap := make(map[string]string)
+	users := []models.User{}
+	err := models.DB.All(&users)
+	if err == nil {
+		for _, user := range users {
+			userOptions[user.Name] = user.ID.String()
+			userIdsToNameMap[user.ID.String()] = user.Name
+		}
+	} else {
+		c.Logger().Errorf("Error getting users: %v", err)
+	}
+	c.Set("userOptions", userOptions)
+	c.Set("userIdsToNameMap", userIdsToNameMap)
+}
+
 // List gets all Goals. This function is mapped to the path
 // GET /goals
 func (v GoalsResource) List(c buffalo.Context) error {
@@ -47,6 +65,7 @@ func (v GoalsResource) List(c buffalo.Context) error {
 	}
 
 	goals := &models.Goals{}
+	setPageContextForGoals(c)
 
 	// Paginate results. Params "page" and "per_page" control pagination.
 	// Default values are "page=1" and "per_page=20".
@@ -84,6 +103,7 @@ func (v GoalsResource) Show(c buffalo.Context) error {
 
 	// Allocate an empty Goal
 	goal := &models.Goal{}
+	setPageContextForGoals(c)
 
 	// To find the Goal the parameter goal_id is used.
 	if err := tx.Find(goal, c.Param("goal_id")); err != nil {
@@ -105,19 +125,7 @@ func (v GoalsResource) Show(c buffalo.Context) error {
 // This function is mapped to the path GET /goals/new
 func (v GoalsResource) New(c buffalo.Context) error {
 	c.Set("goal", &models.Goal{})
-	c.Set("priorityOptions", PRIORITY_OPTIONS)
-	userOptions := make(map[string]string)
-	users := []models.User{}
-	err := models.DB.All(&users)
-	if err == nil {
-		for _, user := range users {
-			userOptions[user.Name] = user.ID.String()
-		}
-	} else {
-		c.Logger().Errorf("Error getting users: %v", err)
-	}
-	c.Set("userOptions", userOptions)
-
+	setPageContextForGoals(c)
 	return c.Render(http.StatusOK, r.HTML("goals/new.plush.html"))
 }
 
@@ -126,6 +134,7 @@ func (v GoalsResource) New(c buffalo.Context) error {
 func (v GoalsResource) Create(c buffalo.Context) error {
 	// Allocate an empty Goal
 	goal := &models.Goal{}
+	setPageContextForGoals(c)
 
 	// Bind goal to the html form elements
 	if err := c.Bind(goal); err != nil {
@@ -185,6 +194,7 @@ func (v GoalsResource) Edit(c buffalo.Context) error {
 
 	// Allocate an empty Goal
 	goal := &models.Goal{}
+	setPageContextForGoals(c)
 
 	if err := tx.Find(goal, c.Param("goal_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
@@ -205,6 +215,7 @@ func (v GoalsResource) Update(c buffalo.Context) error {
 
 	// Allocate an empty Goal
 	goal := &models.Goal{}
+	setPageContextForGoals(c)
 
 	if err := tx.Find(goal, c.Param("goal_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
@@ -261,6 +272,7 @@ func (v GoalsResource) Destroy(c buffalo.Context) error {
 
 	// Allocate an empty Goal
 	goal := &models.Goal{}
+	setPageContextForGoals(c)
 
 	// To find the Goal the parameter goal_id is used.
 	if err := tx.Find(goal, c.Param("goal_id")); err != nil {
