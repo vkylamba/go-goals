@@ -15,6 +15,7 @@ import (
 	"github.com/gobuffalo/middleware/forcessl"
 	"github.com/gobuffalo/middleware/i18n"
 	"github.com/gobuffalo/middleware/paramlogger"
+	"github.com/rs/cors"
 	"github.com/unrolled/secure"
 )
 
@@ -44,9 +45,18 @@ var (
 func App() *buffalo.App {
 	appOnce.Do(func() {
 		app = buffalo.New(buffalo.Options{
-			Env:         ENV,
+			Env: ENV,
+			// SessionStore: sessions.Null{},
 			SessionName: "_go_goals_session",
 		})
+
+		app.PreWares = []buffalo.PreWare{cors.New(cors.Options{
+			AllowedOrigins:   []string{"*"},
+			AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+			AllowedHeaders:   []string{"Content-Type", "Cookie", "Authorization"},
+			AllowCredentials: true,
+			Debug:            true,
+		}).Handler}
 
 		// Automatically redirect to SSL
 		app.Use(forceSSL())
@@ -65,9 +75,11 @@ func App() *buffalo.App {
 		// Setup and use translations:
 		app.Use(translations())
 
-		app.GET("/", HomeHandler)
+		app.POST("/api-token-auth/", TokenAuthHandler)
+		app.GET("/data-admin/resources", ResourceHandler)
 
 		app.Resource("/goals", GoalsResource{})
+		app.GET("/", HomeHandler)
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})
 

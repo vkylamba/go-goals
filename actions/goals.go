@@ -64,7 +64,10 @@ func (v GoalsResource) List(c buffalo.Context) error {
 		c.Set("goals", goals)
 		return c.Render(http.StatusOK, r.HTML("goals/index.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
-		return c.Render(200, r.JSON(goals))
+		responseData := make(map[string]interface{})
+		responseData["results"] = goals
+		responseData["total"] = q.Paginator.TotalEntriesSize
+		return c.Render(200, r.JSON(responseData))
 	}).Wants("xml", func(c buffalo.Context) error {
 		return c.Render(200, r.XML(goals))
 	}).Respond(c)
@@ -103,6 +106,17 @@ func (v GoalsResource) Show(c buffalo.Context) error {
 func (v GoalsResource) New(c buffalo.Context) error {
 	c.Set("goal", &models.Goal{})
 	c.Set("priorityOptions", PRIORITY_OPTIONS)
+	userOptions := make(map[string]string)
+	users := []models.User{}
+	err := models.DB.All(&users)
+	if err == nil {
+		for _, user := range users {
+			userOptions[user.Name] = user.ID.String()
+		}
+	} else {
+		c.Logger().Errorf("Error getting users: %v", err)
+	}
+	c.Set("userOptions", userOptions)
 
 	return c.Render(http.StatusOK, r.HTML("goals/new.plush.html"))
 }

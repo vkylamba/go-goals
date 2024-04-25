@@ -15,7 +15,7 @@
   <tbody>
     <%= for (goal) in goals { %>
       <tr>
-        <td class="align-middle"><%= goal.User %></td><td class="align-middle"><%= goal.Title %></td><td class="align-middle"><%= goal.TargetDate %></td><td class="align-middle"><%= goal.Priority %></td><td class="align-middle"><%= goal.Tags %></td><td class="align-middle"><%= goal.Active %></td><td class="align-middle"><%= goal.Public %></td>
+        <td class="align-middle"><%= goal.UserId %></td><td class="align-middle"><%= goal.Title %></td><td class="align-middle"><%= goal.TargetDate %></td><td class="align-middle"><%= goal.Priority %></td><td class="align-middle"><%= goal.Tags %></td><td class="align-middle"><%= goal.Active %></td><td class="align-middle"><%= goal.Public %></td>
         <td>
           <div class="float-end">
             <%= linkTo(goalPath({ goal_id: goal.ID }), {class: "btn btn-info", body: "View"}) %>
