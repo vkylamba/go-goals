@@ -10,4 +10,4 @@ with_yarn = true
 with_docker = true
 with_grifts = true
 as_web = true
-as_api = false
+as_api = true

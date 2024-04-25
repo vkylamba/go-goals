@@ -12,9 +12,25 @@ CREATE TABLE IF NOT EXISTS "users" (
 );
 CREATE TABLE IF NOT EXISTS "goals" (
 "id" TEXT PRIMARY KEY,
-"user" user NOT NULL,
+"user_id" user NOT NULL,
 "title" TEXT NOT NULL,
 "description" TEXT,
+"completion_factor" decimal,
+"target_date" DATETIME,
+"priority" INTEGER,
+"tags" varchar[] NOT NULL,
+"active" bool,
+"public" bool,
+"created_at" DATETIME NOT NULL,
+"updated_at" DATETIME NOT NULL
+);
+CREATE TABLE IF NOT EXISTS "milestones" (
+"id" TEXT PRIMARY KEY,
+"goal_id" goal NOT NULL,
+"title" TEXT NOT NULL,
+"description" TEXT,
+"contribution_factor" decimal,
+"completion_factor" decimal,
 "target_date" DATETIME,
 "priority" INTEGER,
 "tags" varchar[] NOT NULL,
