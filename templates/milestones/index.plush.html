@@ -1,0 +1,33 @@
+<div class="py-4 mb-2">
+  <h3 class="d-inline-block">Milestones</h3>
+  <div class="float-end">
+    <%= linkTo(newMilestonesPath(), {class: "btn btn-primary"}) { %>
+      Create New Milestone
+    <% } %>
+  </div>
+</div>
+
+<table class="table table-hover table-bordered">
+  <thead class="thead-light">
+    <th>GoalID</th><th>Title</th><th>ContributionFactor</th><th>TargetDate</th><th>Priority</th><th>Tags</th><th>Active</th><th>Public</th>
+    <th>&nbsp;</th>
+  </thead>
+  <tbody>
+    <%= for (milestone) in milestones { %>
+      <tr>
+        <td class="align-middle"><%= milestone.GoalID %></td><td class="align-middle"><%= milestone.Title %></td><td class="align-middle"><%= milestone.ContributionFactor %></td><td class="align-middle"><%= milestone.TargetDate %></td><td class="align-middle"><%= milestone.Priority %></td><td class="align-middle"><%= milestone.Tags %></td><td class="align-middle"><%= milestone.Active %></td><td class="align-middle"><%= milestone.Public %></td>
+        <td>
+          <div class="float-end">
+            <%= linkTo(milestonePath({ milestone_id: milestone.ID }), {class: "btn btn-info", body: "View"}) %>
+            <%= linkTo(editMilestonePath({ milestone_id: milestone.ID }), {class: "btn btn-warning", body: "Edit"}) %>
+            <%= linkTo(milestonePath({ milestone_id: milestone.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+          </div>
+        </td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+
+<div class="text-center">
+  <%= paginator(pagination) %>
+</div>

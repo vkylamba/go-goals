@@ -14,17 +14,18 @@ import (
 
 // Goal is used by pop to map your goals database table to your go code.
 type Goal struct {
-	ID          uuid.UUID     `json:"id" db:"id"`
-	UserId      uuid.UUID     `json:"userId" db:"user"`
-	Title       string        `json:"title" db:"title"`
-	Description nulls.String  `json:"description" db:"description"`
-	TargetDate  nulls.Time    `json:"target_date" db:"target_date"`
-	Priority    nulls.Int     `json:"priority" db:"priority"`
-	Tags        slices.String `json:"tags" db:"tags"`
-	Active      nulls.Bool    `json:"active" db:"active"`
-	Public      nulls.Bool    `json:"public" db:"public"`
-	CreatedAt   time.Time     `json:"created_at" db:"created_at"`
-	UpdatedAt   time.Time     `json:"updated_at" db:"updated_at"`
+	ID               uuid.UUID     `json:"id" db:"id"`
+	UserID           uuid.UUID     `json:"user_id" db:"user_id"`
+	Title            string        `json:"title" db:"title"`
+	Description      nulls.String  `json:"description" db:"description"`
+	CompletionFactor nulls.Float32 `json:"completion_factor" db:"completion_factor"`
+	TargetDate       nulls.Time    `json:"target_date" db:"target_date"`
+	Priority         nulls.Int     `json:"priority" db:"priority"`
+	Tags             slices.String `json:"tags" db:"tags"`
+	Active           nulls.Bool    `json:"active" db:"active"`
+	Public           nulls.Bool    `json:"public" db:"public"`
+	CreatedAt        time.Time     `json:"created_at" db:"created_at"`
+	UpdatedAt        time.Time     `json:"updated_at" db:"updated_at"`
 }
 
 // String is not required by pop and may be deleted

@@ -1,0 +1,6 @@
+- id: "milestone.created.success"
+  translation: "Milestone was successfully created."
+- id: "milestone.updated.success"
+  translation: "Milestone was successfully updated."
+- id: "milestone.destroyed.success"
+  translation: "Milestone was successfully destroyed."

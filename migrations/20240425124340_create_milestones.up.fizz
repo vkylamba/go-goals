@@ -1,8 +1,9 @@
-create_table("goals") {
+create_table("milestones") {
 	t.Column("id", "uuid", {primary: true})
-	t.Column("user_id", "user", {})
+	t.Column("goal_id", "goal", {})
 	t.Column("title", "string", {})
 	t.Column("description", "text", {null: true})
+	t.Column("contribution_factor", "decimal", {null: true})
 	t.Column("completion_factor", "decimal", {null: true})
 	t.Column("target_date", "timestamp", {null: true})
 	t.Column("priority", "integer", {null: true})

@@ -37,3 +37,28 @@ We recommend you heading over to [http://gobuffalo.io](http://gobuffalo.io) and 
 Good luck!
 
 [Powered by Buffalo](http://gobuffalo.io)
+
+
+## Resource generation example:
+
+-- Gaols:
+buffalo generate resource goal \
+    userId:User \
+    title description:nulls.Text \
+    completionFactor:nulls.Float32 \
+    targetDate:nulls.Time \
+    priority:nulls.Int \
+    tags:slices.String \
+    active:nulls.Bool \
+    public:nulls.Bool
+
+-- Milestones:
+buffalo generate resource milestone \
+    goalId:Goal title description:nulls.Text \
+    contributionFactor:nulls.Float32 \
+    completionFactor:nulls.Float32 \
+    targetDate:nulls.Time \
+    priority:nulls.Int \
+    tags:slices.String \
+    active:nulls.Bool \
+    public:nulls.Bool

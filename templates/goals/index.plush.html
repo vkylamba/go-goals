@@ -9,13 +9,13 @@
 
 <table class="table table-hover table-bordered">
   <thead class="thead-light">
-    <th>User</th><th>Title</th><th>TargetDate</th><th>Priority</th><th>Tags</th><th>Active</th><th>Public</th>
+    <th>UserID</th><th>Title</th><th>CompletionFactor</th><th>TargetDate</th><th>Priority</th><th>Tags</th><th>Active</th><th>Public</th>
     <th>&nbsp;</th>
   </thead>
   <tbody>
     <%= for (goal) in goals { %>
       <tr>
-        <td class="align-middle"><%= goal.UserId %></td><td class="align-middle"><%= goal.Title %></td><td class="align-middle"><%= goal.TargetDate %></td><td class="align-middle"><%= goal.Priority %></td><td class="align-middle"><%= goal.Tags %></td><td class="align-middle"><%= goal.Active %></td><td class="align-middle"><%= goal.Public %></td>
+        <td class="align-middle"><%= goal.UserID %></td><td class="align-middle"><%= goal.Title %></td><td class="align-middle"><%= goal.CompletionFactor %></td><td class="align-middle"><%= goal.TargetDate %></td><td class="align-middle"><%= goal.Priority %></td><td class="align-middle"><%= goal.Tags %></td><td class="align-middle"><%= goal.Active %></td><td class="align-middle"><%= goal.Public %></td>
         <td>
           <div class="float-end">
             <%= linkTo(goalPath({ goal_id: goal.ID }), {class: "btn btn-info", body: "View"}) %>
