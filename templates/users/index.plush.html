@@ -21,9 +21,27 @@
       <tr>
         <td class="align-middle"><%= user.ID %></td>
         <td class="align-middle"><%= user.Name %></td>
-        <td class="align-middle"><%= user.IsSuperuser %></td>
-        <td class="align-middle"><%= user.Active %></td>
-        <td class="align-middle"><%= user.Public %></td>
+        <td class="align-middle">
+          <%= if (user.IsSuperuser.Bool) { %>
+            <p class="d-inline-block">&#10004;</p>
+          <% } else { %>
+            <p class="d-inline-block">&#10060;</p>
+          <% } %>
+        </td>
+        <td class="align-middle">
+          <%= if (user.Active.Bool) { %>
+            <p class="d-inline-block">&#10004;</p>
+          <% } else { %>
+            <p class="d-inline-block">&#10060;</p>
+          <% } %>
+        </td>
+        <td class="align-middle">
+          <%= if (user.Public.Bool) { %>
+            <p class="d-inline-block">&#10004;</p>
+          <% } else { %>
+            <p class="d-inline-block">&#10060;</p>
+          <% } %>
+        </td>
         <td>
           <div class="float-end">
             <%= linkTo(editUserPath({ user_id: user.ID }), {class: "btn btn-warning", body: "Edit"}) %>

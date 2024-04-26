@@ -25,17 +25,29 @@
 
   <li class="list-group-item pb-1">
     <label class="small d-block">Is Superuser</label>
-    <p class="d-inline-block"><%= user.IsSuperuser %></p>
+    <%= if (user.IsSuperuser.Bool) { %>
+      <p class="d-inline-block">&#10004;</p>
+    <% } else { %>
+      <p class="d-inline-block">&#10060;</p>
+    <% } %>
   </li>
 
   <li class="list-group-item pb-1">
     <label class="small d-block">Active</label>
-    <p class="d-inline-block"><%= user.Active %></p>
+    <%= if (user.Active.Bool) { %>
+      <p class="d-inline-block">&#10004;</p>
+    <% } else { %>
+      <p class="d-inline-block">&#10060;</p>
+    <% } %>
   </li>
 
   <li class="list-group-item pb-1">
     <label class="small d-block">Public</label>
-    <p class="d-inline-block"><%= user.Public %></p>
+    <%= if (user.Public.Bool) { %>
+      <p class="d-inline-block">&#10004;</p>
+    <% } else { %>
+      <p class="d-inline-block">&#10060;</p>
+    <% } %>
   </li>
 
 </ul>
