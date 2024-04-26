@@ -63,6 +63,19 @@ buffalo generate resource milestone \
     active:nulls.Bool \
     public:nulls.Bool
 
+-- Tasks:
+buffalo generate resource task \
+    goalId:Goal \
+    milestoneId:MileStone \
+    title description:nulls.Text \
+    contributionFactor:nulls.Float32 \
+    completionFactor:nulls.Float32 \
+    targetDate:nulls.Time \
+    priority:nulls.Int \
+    tags:slices.String \
+    active:nulls.Bool \
+    public:nulls.Bool
+
 ## Debug with vscode
 -- Compile: buffalo build -t -gcflags="-N -l" -o bin/app
 -- Start debugging:  dlv — listen=:2345 — headless=true — api-version=2exec ./bin/app

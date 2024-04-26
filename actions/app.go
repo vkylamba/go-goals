@@ -96,6 +96,7 @@ func App() *buffalo.App {
 		//Routes for User
 		app.Resource("/users", UsersResource{})
 
+		app.Resource("/tasks", TasksResource{})
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})
 

@@ -1,9 +1,5 @@
 package models
 
-import (
-  "go_goals/models"
-)
-
 func (ms *ModelSuite) Test_User_Create() {
 	count, err := ms.DB.Count("users")
 	ms.NoError(err)
@@ -14,7 +10,7 @@ func (ms *ModelSuite) Test_User_Create() {
 		Password:             "password",
 		PasswordConfirmation: "password",
 	}
-	
+
 	ms.Zero(u.PasswordHash)
 
 	verrs, err := u.Create(ms.DB)
@@ -73,7 +69,7 @@ func (ms *ModelSuite) Test_User_Create_UserExists() {
 		Email:    "mark@example.com",
 		Password: "password",
 	}
-	
+
 	verrs, err = u.Create(ms.DB)
 	ms.NoError(err)
 	ms.True(verrs.HasAny())

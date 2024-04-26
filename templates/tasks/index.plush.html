@@ -1,0 +1,67 @@
+<div class="py-4 mb-2">
+  <h3 class="d-inline-block">Tasks</h3>
+  <div class="float-end">
+    <%= linkTo(newTasksPath(), {class: "btn btn-primary"}) { %>
+      Create New Task
+    <% } %>
+  </div>
+</div>
+
+<table class="table table-hover table-bordered">
+  <thead class="thead-light">
+    <th>Goal</th>
+    <th>Milestone</th>
+    <th>Title</th>
+    <th>ContributionFactor</th>
+    <th>TargetDate</th>
+    <th>Priority</th>
+    <th>Tags</th>
+    <th>Active</th>
+    <th>Public</th>
+    <th>&nbsp;</th>
+  </thead>
+  <tbody>
+    <%= for (task) in tasks { %>
+      <tr>
+        <td class="align-middle"><%= goalIdsToNameMap[task.GoalID.String()] %></td>
+        <td class="align-middle"><%= milestoneIdsToNameMap[task.MilestoneId.String()] %></td>
+        <td class="align-middle"><%= task.Title %></td>
+        <td class="align-middle"><%= task.ContributionFactor %></td>
+        <td class="align-middle"><%= task.TargetDate %></td>
+        <td class="align-middle">
+          <%= if (task.Priority.Valid) { %>
+            <p class="d-inline-block"><%= priorityIdsToNameMapping[task.Priority.Int] %></p>
+          <% } else { %>
+            <p class="d-inline-block">Unknown</p>
+          <% } %>
+        </td>
+        <td class="align-middle"><%= task.Tags %></td>
+        <td class="align-middle">
+          <%= if (task.Active.Bool) { %>
+            <p class="d-inline-block">&#10004;</p>
+          <% } else { %>
+            <p class="d-inline-block">&#10060;</p>
+          <% } %>
+        </td>
+        <td class="align-middle">
+          <%= if (task.Public.Bool) { %>
+            <p class="d-inline-block">&#10004;</p>
+          <% } else { %>
+            <p class="d-inline-block">&#10060;</p>
+          <% } %>
+        </td>
+        <td>
+          <div class="float-end">
+            <%= linkTo(taskPath({ task_id: task.ID }), {class: "btn btn-info", body: "View"}) %>
+            <%= linkTo(editTaskPath({ task_id: task.ID }), {class: "btn btn-warning", body: "Edit"}) %>
+            <%= linkTo(taskPath({ task_id: task.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+          </div>
+        </td>
+      </tr>
+    <% } %>
+  </tbody>
+</table>
+
+<div class="text-center">
+  <%= paginator(pagination) %>
+</div>

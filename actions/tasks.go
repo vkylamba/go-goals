@@ -17,27 +17,29 @@ import (
 // edit this file.
 
 // Following naming logic is implemented in Buffalo:
-// Model: Singular (Milestone)
-// DB Table: Plural (milestones)
-// Resource: Plural (Milestones)
-// Path: Plural (/milestones)
-// View Template Folder: Plural (/templates/milestones/)
+// Model: Singular (Task)
+// DB Table: Plural (tasks)
+// Resource: Plural (Tasks)
+// Path: Plural (/tasks)
+// View Template Folder: Plural (/templates/tasks/)
 
-// MilestonesResource is the resource for the Milestone model
-type MilestonesResource struct {
+// TasksResource is the resource for the Task model
+type TasksResource struct {
 	buffalo.Resource
 }
 
-func setPageContextForMilestones(c buffalo.Context) {
+func setPageContextForTasks(c buffalo.Context) {
 	c.Set("priorityOptions", PRIORITY_OPTIONS)
 	c.Set("priorityIdsToNameMapping", PRIORITY_IDS_TO_NAME)
 	currentUser := c.Value("current_user").(*models.User)
 	goalOptions := make(map[string]string)
+	var goalIds []interface{}
 	goalIdsToNameMap := make(map[string]string)
 	goals := []models.Goal{}
 	err := models.DB.Where("user_id = ?", currentUser.ID).Where("active = true").All(&goals)
 	if err == nil {
 		for _, goal := range goals {
+			goalIds = append(goalIds, goal.ID.String())
 			goalOptions[goal.Title] = goal.ID.String()
 			goalIdsToNameMap[goal.ID.String()] = goal.Title
 		}
@@ -46,27 +48,41 @@ func setPageContextForMilestones(c buffalo.Context) {
 	}
 	c.Set("goalOptions", goalOptions)
 	c.Set("goalIdsToNameMap", goalIdsToNameMap)
+
+	milestoneOptions := make(map[string]string)
+	milestoneIdsToNameMap := make(map[string]string)
+	milestones := []models.Milestone{}
+	err = models.DB.Where("goal_id in (?)", goalIds...).All(&milestones)
+	if err == nil {
+		for _, milestone := range milestones {
+			milestoneOptions[milestone.Title] = milestone.ID.String()
+			milestoneIdsToNameMap[milestone.ID.String()] = milestone.Title
+		}
+	} else {
+		c.Logger().Errorf("Error getting goals: %v", err)
+	}
+	c.Set("milestoneOptions", milestoneOptions)
+	c.Set("milestoneIdsToNameMap", milestoneIdsToNameMap)
 }
 
-// List gets all Milestones. This function is mapped to the path
-// GET /milestones
-func (v MilestonesResource) List(c buffalo.Context) error {
+// List gets all Tasks. This function is mapped to the path
+// GET /tasks
+func (v TasksResource) List(c buffalo.Context) error {
 	// Get the DB connection from the context
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
 		return fmt.Errorf("no transaction found")
 	}
 
-	setPageContextForMilestones(c)
-
-	milestones := &models.Milestones{}
+	tasks := &models.Tasks{}
+	setPageContextForTasks(c)
 
 	// Paginate results. Params "page" and "per_page" control pagination.
 	// Default values are "page=1" and "per_page=20".
 	q := tx.PaginateFromParams(c.Params())
 
-	// Retrieve all Milestones from the DB
-	if err := q.All(milestones); err != nil {
+	// Retrieve all Tasks from the DB
+	if err := q.All(tasks); err != nil {
 		return err
 	}
 
@@ -74,63 +90,64 @@ func (v MilestonesResource) List(c buffalo.Context) error {
 		// Add the paginator to the context so it can be used in the template.
 		c.Set("pagination", q.Paginator)
 
-		c.Set("milestones", milestones)
-		return c.Render(http.StatusOK, r.HTML("milestones/index.plush.html"))
+		c.Set("tasks", tasks)
+		return c.Render(http.StatusOK, r.HTML("tasks/index.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
-		return c.Render(200, r.JSON(milestones))
+		return c.Render(200, r.JSON(tasks))
 	}).Wants("xml", func(c buffalo.Context) error {
-		return c.Render(200, r.XML(milestones))
+		return c.Render(200, r.XML(tasks))
 	}).Respond(c)
 }
 
-// Show gets the data for one Milestone. This function is mapped to
-// the path GET /milestones/{milestone_id}
-func (v MilestonesResource) Show(c buffalo.Context) error {
+// Show gets the data for one Task. This function is mapped to
+// the path GET /tasks/{task_id}
+func (v TasksResource) Show(c buffalo.Context) error {
 	// Get the DB connection from the context
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
 		return fmt.Errorf("no transaction found")
 	}
 
-	setPageContextForMilestones(c)
+	// Allocate an empty Task
+	task := &models.Task{}
+	setPageContextForTasks(c)
 
-	// Allocate an empty Milestone
-	milestone := &models.Milestone{}
-
-	// To find the Milestone the parameter milestone_id is used.
-	if err := tx.Find(milestone, c.Param("milestone_id")); err != nil {
+	// To find the Task the parameter task_id is used.
+	if err := tx.Find(task, c.Param("task_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
 
 	return responder.Wants("html", func(c buffalo.Context) error {
-		c.Set("milestone", milestone)
+		c.Set("task", task)
 
-		return c.Render(http.StatusOK, r.HTML("milestones/show.plush.html"))
+		return c.Render(http.StatusOK, r.HTML("tasks/show.plush.html"))
 	}).Wants("json", func(c buffalo.Context) error {
-		return c.Render(200, r.JSON(milestone))
+		return c.Render(200, r.JSON(task))
 	}).Wants("xml", func(c buffalo.Context) error {
-		return c.Render(200, r.XML(milestone))
+		return c.Render(200, r.XML(task))
 	}).Respond(c)
 }
 
-// New renders the form for creating a new Milestone.
-// This function is mapped to the path GET /milestones/new
-func (v MilestonesResource) New(c buffalo.Context) error {
-	c.Set("milestone", &models.Milestone{})
-	setPageContextForMilestones(c)
-	return c.Render(http.StatusOK, r.HTML("milestones/new.plush.html"))
+// New renders the form for creating a new Task.
+// This function is mapped to the path GET /tasks/new
+func (v TasksResource) New(c buffalo.Context) error {
+	c.Set("task", &models.Task{})
+	setPageContextForTasks(c)
+
+	return c.Render(http.StatusOK, r.HTML("tasks/new.plush.html"))
 }
 
-// Create adds a Milestone to the DB. This function is mapped to the
-// path POST /milestones
-func (v MilestonesResource) Create(c buffalo.Context) error {
-	// Allocate an empty Milestone
-	milestone := &models.Milestone{}
+// Create adds a Task to the DB. This function is mapped to the
+// path POST /tasks
+func (v TasksResource) Create(c buffalo.Context) error {
+	// Allocate an empty Task
+	task := &models.Task{}
 
-	// Bind milestone to the html form elements
-	if err := c.Bind(milestone); err != nil {
+	// Bind task to the html form elements
+	if err := c.Bind(task); err != nil {
 		return err
 	}
+
 	// Get the DB connection from the context
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
@@ -138,7 +155,7 @@ func (v MilestonesResource) Create(c buffalo.Context) error {
 	}
 
 	// Validate the data from the html form
-	verrs, err := tx.ValidateAndCreate(milestone)
+	verrs, err := tx.ValidateAndCreate(task)
 	if err != nil {
 		return err
 	}
@@ -150,9 +167,9 @@ func (v MilestonesResource) Create(c buffalo.Context) error {
 
 			// Render again the new.html template that the user can
 			// correct the input.
-			c.Set("milestone", milestone)
+			c.Set("task", task)
 
-			return c.Render(http.StatusUnprocessableEntity, r.HTML("milestones/new.plush.html"))
+			return c.Render(http.StatusUnprocessableEntity, r.HTML("tasks/new.plush.html"))
 		}).Wants("json", func(c buffalo.Context) error {
 			return c.Render(http.StatusUnprocessableEntity, r.JSON(verrs))
 		}).Wants("xml", func(c buffalo.Context) error {
@@ -162,60 +179,60 @@ func (v MilestonesResource) Create(c buffalo.Context) error {
 
 	return responder.Wants("html", func(c buffalo.Context) error {
 		// If there are no errors set a success message
-		c.Flash().Add("success", T.Translate(c, "milestone.created.success"))
+		c.Flash().Add("success", T.Translate(c, "task.created.success"))
 
 		// and redirect to the show page
-		return c.Redirect(http.StatusSeeOther, "/milestones/%v", milestone.ID)
+		return c.Redirect(http.StatusSeeOther, "/tasks/%v", task.ID)
 	}).Wants("json", func(c buffalo.Context) error {
-		return c.Render(http.StatusCreated, r.JSON(milestone))
+		return c.Render(http.StatusCreated, r.JSON(task))
 	}).Wants("xml", func(c buffalo.Context) error {
-		return c.Render(http.StatusCreated, r.XML(milestone))
+		return c.Render(http.StatusCreated, r.XML(task))
 	}).Respond(c)
 }
 
-// Edit renders a edit form for a Milestone. This function is
-// mapped to the path GET /milestones/{milestone_id}/edit
-func (v MilestonesResource) Edit(c buffalo.Context) error {
+// Edit renders a edit form for a Task. This function is
+// mapped to the path GET /tasks/{task_id}/edit
+func (v TasksResource) Edit(c buffalo.Context) error {
 	// Get the DB connection from the context
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
 		return fmt.Errorf("no transaction found")
 	}
 
-	setPageContextForMilestones(c)
-	// Allocate an empty Milestone
-	milestone := &models.Milestone{}
+	// Allocate an empty Task
+	task := &models.Task{}
+	setPageContextForTasks(c)
 
-	if err := tx.Find(milestone, c.Param("milestone_id")); err != nil {
+	if err := tx.Find(task, c.Param("task_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
 
-	c.Set("milestone", milestone)
-	return c.Render(http.StatusOK, r.HTML("milestones/edit.plush.html"))
+	c.Set("task", task)
+	return c.Render(http.StatusOK, r.HTML("tasks/edit.plush.html"))
 }
 
-// Update changes a Milestone in the DB. This function is mapped to
-// the path PUT /milestones/{milestone_id}
-func (v MilestonesResource) Update(c buffalo.Context) error {
+// Update changes a Task in the DB. This function is mapped to
+// the path PUT /tasks/{task_id}
+func (v TasksResource) Update(c buffalo.Context) error {
 	// Get the DB connection from the context
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
 		return fmt.Errorf("no transaction found")
 	}
 
-	// Allocate an empty Milestone
-	milestone := &models.Milestone{}
+	// Allocate an empty Task
+	task := &models.Task{}
 
-	if err := tx.Find(milestone, c.Param("milestone_id")); err != nil {
+	if err := tx.Find(task, c.Param("task_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
 
-	// Bind Milestone to the html form elements
-	if err := c.Bind(milestone); err != nil {
+	// Bind Task to the html form elements
+	if err := c.Bind(task); err != nil {
 		return err
 	}
 
-	verrs, err := tx.ValidateAndUpdate(milestone)
+	verrs, err := tx.ValidateAndUpdate(task)
 	if err != nil {
 		return err
 	}
@@ -227,9 +244,9 @@ func (v MilestonesResource) Update(c buffalo.Context) error {
 
 			// Render again the edit.html template that the user can
 			// correct the input.
-			c.Set("milestone", milestone)
+			c.Set("task", task)
 
-			return c.Render(http.StatusUnprocessableEntity, r.HTML("milestones/edit.plush.html"))
+			return c.Render(http.StatusUnprocessableEntity, r.HTML("tasks/edit.plush.html"))
 		}).Wants("json", func(c buffalo.Context) error {
 			return c.Render(http.StatusUnprocessableEntity, r.JSON(verrs))
 		}).Wants("xml", func(c buffalo.Context) error {
@@ -239,47 +256,47 @@ func (v MilestonesResource) Update(c buffalo.Context) error {
 
 	return responder.Wants("html", func(c buffalo.Context) error {
 		// If there are no errors set a success message
-		c.Flash().Add("success", T.Translate(c, "milestone.updated.success"))
+		c.Flash().Add("success", T.Translate(c, "task.updated.success"))
 
 		// and redirect to the show page
-		return c.Redirect(http.StatusSeeOther, "/milestones/%v", milestone.ID)
+		return c.Redirect(http.StatusSeeOther, "/tasks/%v", task.ID)
 	}).Wants("json", func(c buffalo.Context) error {
-		return c.Render(http.StatusOK, r.JSON(milestone))
+		return c.Render(http.StatusOK, r.JSON(task))
 	}).Wants("xml", func(c buffalo.Context) error {
-		return c.Render(http.StatusOK, r.XML(milestone))
+		return c.Render(http.StatusOK, r.XML(task))
 	}).Respond(c)
 }
 
-// Destroy deletes a Milestone from the DB. This function is mapped
-// to the path DELETE /milestones/{milestone_id}
-func (v MilestonesResource) Destroy(c buffalo.Context) error {
+// Destroy deletes a Task from the DB. This function is mapped
+// to the path DELETE /tasks/{task_id}
+func (v TasksResource) Destroy(c buffalo.Context) error {
 	// Get the DB connection from the context
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
 		return fmt.Errorf("no transaction found")
 	}
 
-	// Allocate an empty Milestone
-	milestone := &models.Milestone{}
+	// Allocate an empty Task
+	task := &models.Task{}
 
-	// To find the Milestone the parameter milestone_id is used.
-	if err := tx.Find(milestone, c.Param("milestone_id")); err != nil {
+	// To find the Task the parameter task_id is used.
+	if err := tx.Find(task, c.Param("task_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
 	}
 
-	if err := tx.Destroy(milestone); err != nil {
+	if err := tx.Destroy(task); err != nil {
 		return err
 	}
 
 	return responder.Wants("html", func(c buffalo.Context) error {
 		// If there are no errors set a flash message
-		c.Flash().Add("success", T.Translate(c, "milestone.destroyed.success"))
+		c.Flash().Add("success", T.Translate(c, "task.destroyed.success"))
 
 		// Redirect to the index page
-		return c.Redirect(http.StatusSeeOther, "/milestones")
+		return c.Redirect(http.StatusSeeOther, "/tasks")
 	}).Wants("json", func(c buffalo.Context) error {
-		return c.Render(http.StatusOK, r.JSON(milestone))
+		return c.Render(http.StatusOK, r.JSON(task))
 	}).Wants("xml", func(c buffalo.Context) error {
-		return c.Render(http.StatusOK, r.XML(milestone))
+		return c.Render(http.StatusOK, r.XML(task))
 	}).Respond(c)
 }

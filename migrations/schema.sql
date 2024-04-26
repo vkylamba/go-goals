@@ -42,3 +42,19 @@ CREATE TABLE IF NOT EXISTS "milestones" (
 "created_at" DATETIME NOT NULL,
 "updated_at" DATETIME NOT NULL
 );
+CREATE TABLE IF NOT EXISTS "tasks" (
+"id" TEXT PRIMARY KEY,
+"goal_id" goal NOT NULL,
+"milestone_id" milestone NOT NULL,
+"title" TEXT NOT NULL,
+"description" TEXT,
+"contribution_factor" decimal,
+"completion_factor" decimal,
+"target_date" DATETIME,
+"priority" INTEGER,
+"tags" varchar[] NOT NULL,
+"active" bool,
+"public" bool,
+"created_at" DATETIME NOT NULL,
+"updated_at" DATETIME NOT NULL
+);

@@ -1,0 +1,15 @@
+create_table("tasks") {
+	t.Column("id", "uuid", {primary: true})
+	t.Column("goal_id", "goal", {})
+	t.Column("milestone_id", "milestone", {})
+	t.Column("title", "string", {})
+	t.Column("description", "text", {null: true})
+	t.Column("contribution_factor", "decimal", {null: true})
+	t.Column("completion_factor", "decimal", {null: true})
+	t.Column("target_date", "timestamp", {null: true})
+	t.Column("priority", "integer", {null: true})
+	t.Column("tags", "varchar[]", {})
+	t.Column("active", "bool", {null: true})
+	t.Column("public", "bool", {null: true})
+	t.Timestamps()
+}

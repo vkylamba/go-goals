@@ -1,0 +1,98 @@
+<div class="py-4 mb-2">
+  <h3 class="d-inline-block">Task Details</h3>
+
+  <div class="float-end">
+    <%= linkTo(tasksPath(), {class: "btn btn-info"}) { %>
+      Back to all Tasks
+    <% } %>
+    <%= linkTo(editTaskPath({ task_id: task.ID }), {class: "btn btn-warning", body: "Edit"}) %>
+    <%= linkTo(taskPath({ task_id: task.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+  </div>
+</div>
+
+
+
+<ul class="list-group mb-2 ">
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Goal</label>
+    <p class="d-inline-block"><%= goalIdsToNameMap[task.GoalID.String()] %></p>
+  </li>
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Milestone</label>
+    <p class="d-inline-block"><%= milestoneIdsToNameMap[task.MilestoneID.String()] %></p>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Title</label>
+    <p class="d-inline-block"><%= task.Title %></p>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Description</label>
+    <p class="d-inline-block"><%= task.Description %></p>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">ContributionFactor</label>
+    <p class="d-inline-block"><%= task.ContributionFactor %></p>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">TargetDate</label>
+    <p class="d-inline-block"><%= task.TargetDate %></p>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Priority</label>
+    <p class="d-inline-block"><%= task.Priority %></p>
+    <%= if (task.Priority.Valid) { %>
+      <p class="d-inline-block"><%= priorityIdsToNameMapping[task.Priority.Int] %></p>
+    <% } else { %>
+      <p class="d-inline-block">Unknown</p>
+    <% } %>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Tags</label>
+    <p class="d-inline-block"><%= task.Tags %></p>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Active</label>
+    <%= if (task.Active.Bool) { %>
+      <p class="d-inline-block">&#10004;</p>
+    <% } else { %>
+      <p class="d-inline-block">&#10060;</p>
+    <% } %>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Public</label>
+    <%= if (task.Public.Bool) { %>
+      <p class="d-inline-block">&#10004;</p>
+    <% } else { %>
+      <p class="d-inline-block">&#10060;</p>
+    <% } %>
+  </li>
+
+
+</ul>

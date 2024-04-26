@@ -1,0 +1,11 @@
+<%= f.SelectTag("GoalID", {options: goalOptions}) %>
+<%= f.SelectTag("MileStoneID", {options: milestoneOptions}) %>
+<%= f.InputTag("Title") %>
+<%= f.TextAreaTag("Description", {rows: 10}) %>
+<%= f.InputTag("ContributionFactor", {type: "float"}) %>
+<%= f.InputTag("TargetDate", {type: "date"}) %>
+<%= f.SelectTag("Priority", {options: priorityOptions}) %>
+<%= f.InputTag("Tags") %>
+<%= f.CheckboxTag("Active", {unchecked: false}) %>
+<%= f.CheckboxTag("Public", {unchecked: false}) %>
+<button class="btn btn-success" role="submit">Save</button>
