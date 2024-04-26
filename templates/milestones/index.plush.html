@@ -9,13 +9,38 @@
 
 <table class="table table-hover table-bordered">
   <thead class="thead-light">
-    <th>GoalID</th><th>Title</th><th>ContributionFactor</th><th>TargetDate</th><th>Priority</th><th>Tags</th><th>Active</th><th>Public</th>
+    <th>Goal</th><th>Title</th><th>ContributionFactor</th><th>TargetDate</th><th>Priority</th><th>Tags</th><th>Active</th><th>Public</th>
     <th>&nbsp;</th>
   </thead>
   <tbody>
     <%= for (milestone) in milestones { %>
       <tr>
-        <td class="align-middle"><%= milestone.GoalID %></td><td class="align-middle"><%= milestone.Title %></td><td class="align-middle"><%= milestone.ContributionFactor %></td><td class="align-middle"><%= milestone.TargetDate %></td><td class="align-middle"><%= milestone.Priority %></td><td class="align-middle"><%= milestone.Tags %></td><td class="align-middle"><%= milestone.Active %></td><td class="align-middle"><%= milestone.Public %></td>
+        <td class="align-middle"><%= goalIdsToNameMap[milestone.GoalID.String()] %></td>
+        <td class="align-middle"><%= milestone.Title %></td>
+        <td class="align-middle"><%= milestone.ContributionFactor %></td>
+        <td class="align-middle"><%= milestone.TargetDate %></td>
+        <td class="align-middle">
+          <%= if (milestone.Priority.Valid) { %>
+            <p class="d-inline-block"><%= priorityIdsToNameMapping[milestone.Priority.Int] %></p>
+          <% } else { %>
+            <p class="d-inline-block">Unknown</p>
+          <% } %>
+        </td>
+        <td class="align-middle"><%= milestone.Tags %></td>
+        <td class="align-middle">
+          <%= if (milestone.Active.Bool) { %>
+            <p class="d-inline-block">&#10004;</p>
+          <% } else { %>
+            <p class="d-inline-block">&#10060;</p>
+          <% } %>
+        </td>
+        <td class="align-middle">
+          <%= if (milestone.Public.Bool) { %>
+            <p class="d-inline-block">&#10004;</p>
+          <% } else { %>
+            <p class="d-inline-block">&#10060;</p>
+          <% } %>
+        </td>
         <td>
           <div class="float-end">
             <%= linkTo(milestonePath({ milestone_id: milestone.ID }), {class: "btn btn-info", body: "View"}) %>

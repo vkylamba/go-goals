@@ -16,8 +16,8 @@
 
 
   <li class="list-group-item pb-1">
-    <label class="small d-block">GoalID</label>
-    <p class="d-inline-block"><%= milestone.GoalID %></p>
+    <label class="small d-block">Goal</label>
+    <p class="d-inline-block"><%= goalIdsToNameMap[milestone.GoalID.String()] %></p>
   </li>
 
 
@@ -53,6 +53,11 @@
   <li class="list-group-item pb-1">
     <label class="small d-block">Priority</label>
     <p class="d-inline-block"><%= milestone.Priority %></p>
+    <%= if (milestone.Priority.Valid) { %>
+      <p class="d-inline-block"><%= priorityIdsToNameMapping[milestone.Priority.Int] %></p>
+    <% } else { %>
+      <p class="d-inline-block">Unknown</p>
+    <% } %>
   </li>
 
 
@@ -66,14 +71,22 @@
 
   <li class="list-group-item pb-1">
     <label class="small d-block">Active</label>
-    <p class="d-inline-block"><%= milestone.Active %></p>
+    <%= if (milestone.Active.Bool) { %>
+      <p class="d-inline-block">&#10004;</p>
+    <% } else { %>
+      <p class="d-inline-block">&#10060;</p>
+    <% } %>
   </li>
 
 
 
   <li class="list-group-item pb-1">
     <label class="small d-block">Public</label>
-    <p class="d-inline-block"><%= milestone.Public %></p>
+    <%= if (milestone.Public.Bool) { %>
+      <p class="d-inline-block">&#10004;</p>
+    <% } else { %>
+      <p class="d-inline-block">&#10060;</p>
+    <% } %>
   </li>
 
 

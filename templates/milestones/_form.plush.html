@@ -1,9 +1,9 @@
-<%= f.InputTag("GoalID") %>
+<%= f.SelectTag("GoalID", {options: goalOptions}) %>
 <%= f.InputTag("Title") %>
 <%= f.TextAreaTag("Description", {rows: 10}) %>
-<%= f.InputTag("ContributionFactor") %>
-<%= f.InputTag("TargetDate") %>
-<%= f.InputTag("Priority") %>
+<%= f.InputTag("ContributionFactor", {type: "float"}) %>
+<%= f.InputTag("TargetDate", {type: "date"}) %>
+<%= f.SelectTag("Priority", {options: priorityOptions}) %>
 <%= f.InputTag("Tags") %>
 <%= f.CheckboxTag("Active", {unchecked: false}) %>
 <%= f.CheckboxTag("Public", {unchecked: false}) %>

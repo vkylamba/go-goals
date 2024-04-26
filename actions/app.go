@@ -67,9 +67,6 @@ func App() *buffalo.App {
 		// Protect against CSRF attacks. https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
 		// Remove to disable this.
 		app.Use(csrf.New)
-
-		// Wraps each request in a transaction.
-		//   c.Value("tx").(*pop.Connection)
 		// Remove to disable this.
 		app.Use(popmw.Transaction(models.DB))
 		// Setup and use translations:
@@ -78,15 +75,15 @@ func App() *buffalo.App {
 		app.POST("/api-token-auth/", TokenAuthHandler)
 		app.GET("/data-admin/resources", ResourceHandler)
 
-		app.Resource("/goals", GoalsResource{})
-		app.GET("/", HomeHandler)
-		app.Resource("/milestones", MilestonesResource{})
-
 		// NOTE: this block should go before any resources
 		// that need to be protected by buffalo-goth!
 		//AuthMiddlewares
 		app.Use(SetCurrentUser)
 		app.Use(Authorize)
+
+		app.Resource("/goals", GoalsResource{})
+		app.GET("/", HomeHandler)
+		app.Resource("/milestones", MilestonesResource{})
 
 		//Routes for Auth
 		auth := app.Group("/auth")

@@ -20,61 +20,56 @@
     <p class="d-inline-block"><%= userIdsToNameMap[goal.UserID.String()] %></p>
   </li>
 
-
-
   <li class="list-group-item pb-1">
     <label class="small d-block">Title</label>
     <p class="d-inline-block"><%= goal.Title %></p>
   </li>
-
-
 
   <li class="list-group-item pb-1">
     <label class="small d-block">Description</label>
     <p class="d-inline-block"><%= goal.Description %></p>
   </li>
 
-
-
   <li class="list-group-item pb-1">
     <label class="small d-block">CompletionFactor</label>
     <p class="d-inline-block"><%= goal.CompletionFactor %></p>
   </li>
-
-
 
   <li class="list-group-item pb-1">
     <label class="small d-block">TargetDate</label>
     <p class="d-inline-block"><%= goal.TargetDate %></p>
   </li>
 
-
-
   <li class="list-group-item pb-1">
     <label class="small d-block">Priority</label>
-    <p class="d-inline-block"><%= goal.Priority %></p>
+    <%= if (goal.Priority.Valid) { %>
+      <p class="d-inline-block"><%= priorityIdsToNameMapping[goal.Priority.Int] %></p>
+    <% } else { %>
+      <p class="d-inline-block">Unknown</p>
+    <% } %>
   </li>
-
-
 
   <li class="list-group-item pb-1">
     <label class="small d-block">Tags</label>
     <p class="d-inline-block"><%= goal.Tags %></p>
   </li>
 
-
-
   <li class="list-group-item pb-1">
     <label class="small d-block">Active</label>
-    <p class="d-inline-block"><%= goal.Active %></p>
+    <%= if (goal.Active.Bool) { %>
+      <p class="d-inline-block">&#10004;</p>
+    <% } else { %>
+      <p class="d-inline-block">&#10060;</p>
+    <% } %>
   </li>
-
-
 
   <li class="list-group-item pb-1">
     <label class="small d-block">Public</label>
-    <p class="d-inline-block"><%= goal.Public %></p>
+    <%= if (goal.Public.Bool) { %>
+      <p class="d-inline-block">&#10004;</p>
+    <% } else { %>
+      <p class="d-inline-block">&#10060;</p>
+    <% } %>
   </li>
-
 
 </ul>

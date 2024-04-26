@@ -29,16 +29,23 @@ type GoalsResource struct {
 }
 
 // Selectable allows any struct to become an option in the select tag.
-type PriorityOptions map[string]string
+type PriorityOptions map[string]int
 
 var PRIORITY_OPTIONS = PriorityOptions{
-	"Low":    "low",
-	"Medium": "medium",
-	"High":   "high",
+	"Low":    2,
+	"Medium": 1,
+	"High":   0,
+}
+
+var PRIORITY_IDS_TO_NAME = map[int]string{
+	2: "Low",
+	1: "Medium",
+	0: "High",
 }
 
 func setPageContextForGoals(c buffalo.Context) {
 	c.Set("priorityOptions", PRIORITY_OPTIONS)
+	c.Set("priorityIdsToNameMapping", PRIORITY_IDS_TO_NAME)
 	userOptions := make(map[string]string)
 	userIdsToNameMap := make(map[string]string)
 	users := []models.User{}

@@ -28,6 +28,26 @@ type MilestonesResource struct {
 	buffalo.Resource
 }
 
+func setPageContextForMilestones(c buffalo.Context) {
+	c.Set("priorityOptions", PRIORITY_OPTIONS)
+	c.Set("priorityIdsToNameMapping", PRIORITY_IDS_TO_NAME)
+	currentUser := c.Value("current_user").(*models.User)
+	goalOptions := make(map[string]string)
+	goalIdsToNameMap := make(map[string]string)
+	goals := []models.Goal{}
+	err := models.DB.Where("user_id = ?", currentUser.ID).All(&goals)
+	if err == nil {
+		for _, goal := range goals {
+			goalOptions[goal.Title] = goal.ID.String()
+			goalIdsToNameMap[goal.ID.String()] = goal.Title
+		}
+	} else {
+		c.Logger().Errorf("Error getting goals: %v", err)
+	}
+	c.Set("goalOptions", goalOptions)
+	c.Set("goalIdsToNameMap", goalIdsToNameMap)
+}
+
 // List gets all Milestones. This function is mapped to the path
 // GET /milestones
 func (v MilestonesResource) List(c buffalo.Context) error {
@@ -36,6 +56,8 @@ func (v MilestonesResource) List(c buffalo.Context) error {
 	if !ok {
 		return fmt.Errorf("no transaction found")
 	}
+
+	setPageContextForMilestones(c)
 
 	milestones := &models.Milestones{}
 
@@ -70,6 +92,8 @@ func (v MilestonesResource) Show(c buffalo.Context) error {
 		return fmt.Errorf("no transaction found")
 	}
 
+	setPageContextForMilestones(c)
+
 	// Allocate an empty Milestone
 	milestone := &models.Milestone{}
 
@@ -93,7 +117,7 @@ func (v MilestonesResource) Show(c buffalo.Context) error {
 // This function is mapped to the path GET /milestones/new
 func (v MilestonesResource) New(c buffalo.Context) error {
 	c.Set("milestone", &models.Milestone{})
-
+	setPageContextForMilestones(c)
 	return c.Render(http.StatusOK, r.HTML("milestones/new.plush.html"))
 }
 
@@ -107,7 +131,6 @@ func (v MilestonesResource) Create(c buffalo.Context) error {
 	if err := c.Bind(milestone); err != nil {
 		return err
 	}
-
 	// Get the DB connection from the context
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
@@ -159,6 +182,7 @@ func (v MilestonesResource) Edit(c buffalo.Context) error {
 		return fmt.Errorf("no transaction found")
 	}
 
+	setPageContextForMilestones(c)
 	// Allocate an empty Milestone
 	milestone := &models.Milestone{}
 
