@@ -10,6 +10,6 @@
   </div>
 </div>
 
-<%= formFor(user, {action: editUserPath({ user_id: user.ID }), method: "POST"}) { %>
+<%= formFor(user, {action: userPath({ user_id: user.ID }), method: "PUT"}) { %>
   <%= partial("users/form.html") %>
 <% } %>

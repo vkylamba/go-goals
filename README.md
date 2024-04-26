@@ -62,3 +62,7 @@ buffalo generate resource milestone \
     tags:slices.String \
     active:nulls.Bool \
     public:nulls.Bool
+
+## Debug with vscode
+-- Compile: buffalo build -t -gcflags="-N -l" -o bin/app
+-- Start debugging:  dlv — listen=:2345 — headless=true — api-version=2exec ./bin/app

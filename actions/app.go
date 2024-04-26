@@ -96,13 +96,8 @@ func App() *buffalo.App {
 		auth.DELETE("/", AuthDestroy)
 		auth.Middleware.Skip(Authorize, AuthLanding, AuthNew, AuthCreate)
 
-		//Routes for User registration
-		users := app.Group("/users")
-		users.GET("/", UsersList)
-		users.GET("/new", UsersCreate)
-		users.GET("/{user_id}", UsersShow)
-		users.GET("/{user_id}/edit", UsersEdit)
-		users.POST("/{user_id}/edit", UsersEdit)
+		//Routes for User
+		app.Resource("/users", UsersResource{})
 
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})

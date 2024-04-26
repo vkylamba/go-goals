@@ -12,7 +12,12 @@ import (
 	"go_goals/models"
 )
 
-func UsersList(c buffalo.Context) error {
+// UsersResource is the resource for the User model
+type UsersResource struct {
+	buffalo.Resource
+}
+
+func (v UsersResource) List(c buffalo.Context) error {
 	// Get the DB connection from the context
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
@@ -47,7 +52,7 @@ func UsersList(c buffalo.Context) error {
 	}).Respond(c)
 }
 
-func UsersShow(c buffalo.Context) error {
+func (v UsersResource) Show(c buffalo.Context) error {
 	// Get the DB connection from the context
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
@@ -74,7 +79,9 @@ func UsersShow(c buffalo.Context) error {
 	}).Respond(c)
 }
 
-func UsersEdit(c buffalo.Context) error {
+// Edit renders a edit form for a User. This function is
+// mapped to the path GET /users/{user_id}/edit
+func (v UsersResource) Edit(c buffalo.Context) error {
 	// Get the DB connection from the context
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
@@ -83,22 +90,79 @@ func UsersEdit(c buffalo.Context) error {
 
 	// Allocate an empty User
 	user := &models.User{}
+	setPageContextForGoals(c)
 
 	if err := tx.Find(user, c.Param("user_id")); err != nil {
-		c.Logger().Errorf("Error getting users: %v", err)
 		return c.Error(http.StatusNotFound, err)
 	}
-
-	user.Name = c.Request().FormValue("Name")
-	user.Email = c.Request().FormValue("Email")
-	tx.Save(user)
 
 	c.Set("user", user)
 	return c.Render(http.StatusOK, r.HTML("users/edit.plush.html"))
 }
 
+func (v UsersResource) Update(c buffalo.Context) error {
+	// Get the DB connection from the context
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+
+	// Allocate an empty Goal
+	user := &models.User{}
+
+	if err := tx.Find(user, c.Param("user_id")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	// Bind User to the html form elements
+	if err := c.Bind(user); err != nil {
+		return err
+	}
+
+	verrs, err := tx.ValidateAndUpdate(user)
+	if err != nil {
+		return err
+	}
+
+	if verrs.HasAny() {
+		return responder.Wants("html", func(c buffalo.Context) error {
+			// Make the errors available inside the html template
+			c.Set("errors", verrs)
+
+			// Render again the edit.html template that the user can
+			// correct the input.
+			c.Set("user", user)
+
+			return c.Render(http.StatusUnprocessableEntity, r.HTML("users/edit.plush.html"))
+		}).Wants("json", func(c buffalo.Context) error {
+			return c.Render(http.StatusUnprocessableEntity, r.JSON(verrs))
+		}).Wants("xml", func(c buffalo.Context) error {
+			return c.Render(http.StatusUnprocessableEntity, r.XML(verrs))
+		}).Respond(c)
+	}
+
+	return responder.Wants("html", func(c buffalo.Context) error {
+		// If there are no errors set a success message
+		c.Flash().Add("success", T.Translate(c, "user.updated.success"))
+
+		// and redirect to the show page
+		return c.Redirect(http.StatusSeeOther, "/users/%v", user.ID)
+	}).Wants("json", func(c buffalo.Context) error {
+		return c.Render(http.StatusOK, r.JSON(user))
+	}).Wants("xml", func(c buffalo.Context) error {
+		return c.Render(http.StatusOK, r.XML(user))
+	}).Respond(c)
+}
+
+// New renders the form for creating a new User.
+// This function is mapped to the path GET /user/new
+func (v UsersResource) New(c buffalo.Context) error {
+	c.Set("user", &models.Goal{})
+	return c.Render(http.StatusOK, r.HTML("users/new.plush.html"))
+}
+
 // UsersCreate registers a new user with the application.
-func UsersCreate(c buffalo.Context) error {
+func (v UsersResource) Create(c buffalo.Context) error {
 	u := &models.User{}
 	if err := c.Bind(u); err != nil {
 		return errors.WithStack(err)
@@ -120,6 +184,40 @@ func UsersCreate(c buffalo.Context) error {
 	c.Flash().Add("success", "Welcome to go-goals!")
 
 	return c.Redirect(http.StatusFound, "/")
+}
+
+// Destroy deletes a User from the DB. This function is mapped
+// to the path DELETE /user/{user_id}
+func (v UsersResource) Destroy(c buffalo.Context) error {
+	// Get the DB connection from the context
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+
+	// Allocate an empty User
+	user := &models.User{}
+
+	// To find the user the parameter user_id is used.
+	if err := tx.Find(user, c.Param("user_id")); err != nil {
+		return c.Error(http.StatusNotFound, err)
+	}
+
+	if err := tx.Destroy(user); err != nil {
+		return err
+	}
+
+	return responder.Wants("html", func(c buffalo.Context) error {
+		// If there are no errors set a flash message
+		c.Flash().Add("success", T.Translate(c, "user.destroyed.success"))
+
+		// Redirect to the index page
+		return c.Redirect(http.StatusSeeOther, "/users")
+	}).Wants("json", func(c buffalo.Context) error {
+		return c.Render(http.StatusOK, r.JSON(user))
+	}).Wants("xml", func(c buffalo.Context) error {
+		return c.Render(http.StatusOK, r.XML(user))
+	}).Respond(c)
 }
 
 // SetCurrentUser attempts to find a user based on the current_user_id
