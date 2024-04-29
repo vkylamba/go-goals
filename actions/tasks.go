@@ -50,7 +50,7 @@ func setPageContextForTasks(c buffalo.Context) {
 	c.Set("goalIdsToNameMap", goalIdsToNameMap)
 
 	milestoneOptions := make(map[string]string)
-	milestoneIdsToNameMap := make(map[string]string)
+	milestoneIdsToNameMap := make(map[any]string)
 	milestones := []models.Milestone{}
 	err = models.DB.Where("goal_id in (?)", goalIds...).All(&milestones)
 	if err == nil {

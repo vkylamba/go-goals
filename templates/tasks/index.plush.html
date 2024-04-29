@@ -24,7 +24,14 @@
     <%= for (task) in tasks { %>
       <tr>
         <td class="align-middle"><%= goalIdsToNameMap[task.GoalID.String()] %></td>
-        <td class="align-middle"><%= milestoneIdsToNameMap[task.MilestoneId.String()] %></td>
+        <td class="align-middle">
+          <%= if (task.MilestoneID.Valid) { %>
+            <p class="d-inline-block"><%= task.MilestoneID.String() %></p>
+            <p class="d-inline-block"><%= milestoneIdsToNameMap[task.MilestoneID] %></p>
+          <% } else { %>
+            <p class="d-inline-block">Unknown</p>
+          <% } %>
+        </td>
         <td class="align-middle"><%= task.Title %></td>
         <td class="align-middle"><%= task.ContributionFactor %></td>
         <td class="align-middle"><%= task.TargetDate %></td>
