@@ -1,0 +1,15 @@
+create_table("notes") {
+	t.Column("id", "uuid", {primary: true})
+	t.Column("goal_id", "uuid", {null: true})
+	t.Column("milestone_id", "uuid", {null: true})
+	t.Column("task_id", "uuid", {null: true})
+	t.Column("note_id", "uuid", {null: true})
+	t.Column("created_by", "uuid", {null: true})
+	t.Column("title", "string", {})
+	t.Column("type", "string", {})
+	t.Column("description", "text", {null: true})
+	t.Column("tags", "varchar[]", {})
+	t.Column("active", "bool", {null: true})
+	t.Column("public", "bool", {null: true})
+	t.Timestamps()
+}

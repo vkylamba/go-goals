@@ -102,6 +102,7 @@ func App() *buffalo.App {
 		auth.POST("/register-new-user", userResource.Create)
 		auth.Middleware.Skip(Authorize, AuthLanding, AuthNew, AuthCreate, userResource.New, userResource.Create)
 
+		app.Resource("/notes", NotesResource{})
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})
 

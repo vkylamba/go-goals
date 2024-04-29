@@ -66,7 +66,7 @@ buffalo generate resource milestone \
 -- Tasks:
 buffalo generate resource task \
     goalId:Goal \
-    milestoneId:MileStone \
+    milestoneId:Milestone \
     title description:nulls.Text \
     contributionFactor:nulls.Float32 \
     completionFactor:nulls.Float32 \
@@ -75,6 +75,19 @@ buffalo generate resource task \
     tags:slices.String \
     active:nulls.Bool \
     public:nulls.Bool
+
+-- Notes:
+buffalo generate resource note \
+    goalId:nulls.UUID \
+    milestoneId:nulls.UUID \
+    taskId:nulls.UUID \
+    noteId:nulls.UUID \
+    createdBy:nulls.UUID \
+    title type description:nulls.Text \
+    tags:slices.String \
+    active:nulls.Bool \
+    public:nulls.Bool
+
 
 ## Debug with vscode
 -- Compile: buffalo build -t -gcflags="-N -l" -o bin/app
