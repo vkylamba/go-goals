@@ -1,0 +1,85 @@
+<div class="py-4 mb-2">
+  <h3 class="d-inline-block">Note Details</h3>
+
+  <div class="float-end">
+    <%= linkTo(notesPath(), {class: "btn btn-info"}) { %>
+      Back to all notes
+    <% } %>
+    <%= linkTo(editNotePath({ note_id: note.ID }), {class: "btn btn-warning", body: "Edit"}) %>
+    <%= linkTo(notePath({ note_id: note.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+  </div>
+</div>
+
+
+
+<ul class="list-group mb-2 ">
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Goal</label>
+    <p class="d-inline-block"><%= note.GoalID.String() %></p>
+  </li>
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Milestone</label>
+    <p class="d-inline-block"><%= note.MilestoneID.String() %></p>
+  </li>
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Task</label>
+    <p class="d-inline-block"><%= note.TaskID.String() %></p>
+  </li>
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Note</label>
+    <p class="d-inline-block"><%= note.NoteID.String() %></p>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Title</label>
+    <p class="d-inline-block"><%= note.Title %></p>
+  </li>
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Type</label>
+    <p class="d-inline-block"><%= note.Type %></p>
+  </li>
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Description</label>
+    <p class="d-inline-block"><%= note.Description %></p>
+  </li>
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Tags</label>
+    <p class="d-inline-block"><%= note.Tags %></p>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Active</label>
+    <%= if (note.Active.Bool) { %>
+      <p class="d-inline-block">&#10004;</p>
+    <% } else { %>
+      <p class="d-inline-block">&#10060;</p>
+    <% } %>
+  </li>
+
+
+
+  <li class="list-group-item pb-1">
+    <label class="small d-block">Public</label>
+    <%= if (note.Public.Bool) { %>
+      <p class="d-inline-block">&#10004;</p>
+    <% } else { %>
+      <p class="d-inline-block">&#10060;</p>
+    <% } %>
+  </li>
+
+
+</ul>

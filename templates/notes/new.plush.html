@@ -1,0 +1,8 @@
+<div class="py-4 mb-2">
+  <h3 class="d-inline-block">New Note</h3>
+</div>
+
+<%= formFor(note, {action: notesPath(), method: "POST"}) { %>
+  <%= partial("notes/form.html") %>
+  <%= linkTo(notesPath(), {class: "btn btn-warning", "data-confirm": "Are you sure?", body: "Cancel"}) %>
+<% } %>

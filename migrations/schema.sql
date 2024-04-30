@@ -58,3 +58,19 @@ CREATE TABLE IF NOT EXISTS "tasks" (
 "created_at" DATETIME NOT NULL,
 "updated_at" DATETIME NOT NULL
 );
+CREATE TABLE IF NOT EXISTS "notes" (
+"id" TEXT PRIMARY KEY,
+"goal_id" char(36),
+"milestone_id" char(36),
+"task_id" char(36),
+"note_id" char(36),
+"created_by" char(36),
+"title" TEXT NOT NULL,
+"type" TEXT NOT NULL,
+"description" TEXT,
+"tags" varchar[] NOT NULL,
+"active" bool,
+"public" bool,
+"created_at" DATETIME NOT NULL,
+"updated_at" DATETIME NOT NULL
+);

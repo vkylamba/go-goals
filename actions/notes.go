@@ -28,6 +28,113 @@ type NotesResource struct {
 	buffalo.Resource
 }
 
+func setPageContextForNotes(c buffalo.Context) {
+	userOptions := make(map[string]string)
+	userIdsToNameMap := make(map[string]string)
+	users := []models.User{}
+	err := models.DB.All(&users)
+	if err == nil {
+		for _, user := range users {
+			userOptions[user.Name] = user.ID.String()
+			userIdsToNameMap[user.ID.String()] = user.Name
+		}
+	} else {
+		c.Logger().Errorf("Error getting users: %v", err)
+	}
+	c.Set("userOptions", userOptions)
+	c.Set("userIdsToNameMap", userIdsToNameMap)
+
+	currentUser := c.Value("current_user").(*models.User)
+	goalOptions := make(map[string]string)
+	var goalIds []interface{}
+	goalIdsToNameMap := make(map[string]string)
+	goals := []models.Goal{}
+	err = models.DB.Where("user_id = ?", currentUser.ID).Where("active = true").All(&goals)
+	if err == nil {
+		for _, goal := range goals {
+			goalIds = append(goalIds, goal.ID.String())
+			goalOptions[goal.Title] = goal.ID.String()
+			goalIdsToNameMap[goal.ID.String()] = goal.Title
+		}
+	} else {
+		c.Logger().Errorf("Error getting goals: %v", err)
+	}
+	c.Set("goalOptions", goalOptions)
+	c.Set("goalIdsToNameMap", goalIdsToNameMap)
+
+	milestoneOptions := make(map[string]string)
+	milestoneIdsToNameMap := make(map[any]string)
+	milestones := []models.Milestone{}
+	var milestoneIds []interface{}
+	err = models.DB.Where("goal_id in (?)", goalIds...).All(&milestones)
+	if err == nil {
+		for _, milestone := range milestones {
+			milestoneIds = append(milestoneIds, milestone.ID.String())
+			milestoneOptions[milestone.Title] = milestone.ID.String()
+			milestoneIdsToNameMap[milestone.ID.String()] = milestone.Title
+		}
+	} else {
+		c.Logger().Errorf("Error getting milestones: %v", err)
+	}
+	c.Set("milestoneOptions", milestoneOptions)
+	c.Set("milestoneIdsToNameMap", milestoneIdsToNameMap)
+
+	taskOptions := make(map[string]string)
+	taskIdsToNameMap := make(map[any]string)
+	tasks := []models.Task{}
+	var taskIds []interface{}
+	err = models.DB.Where("goal_id in (?)", goalIds...).All(&tasks)
+	if err == nil {
+		for _, task := range tasks {
+			taskIds = append(taskIds, task.ID.String())
+			taskOptions[task.Title] = task.ID.String()
+			taskIdsToNameMap[task.ID.String()] = task.Title
+		}
+	} else {
+		c.Logger().Errorf("Error getting tasks: %v", err)
+	}
+	c.Set("taskOptions", taskOptions)
+	c.Set("taskIdsToNameMap", taskIdsToNameMap)
+
+	noteOptions := make(map[string]string)
+	noteIdsToNameMap := make(map[any]string)
+
+	goalNotes := []models.Note{}
+	err = models.DB.Where("goal_id in (?)", goalIds...).All(&goalNotes)
+	if err == nil {
+		for _, note := range goalNotes {
+			noteOptions[note.Title] = note.ID.String()
+			noteIdsToNameMap[note.ID.String()] = note.Title
+		}
+	} else {
+		c.Logger().Errorf("Error getting notes: %v", err)
+	}
+
+	milestoneNotes := []models.Note{}
+	err = models.DB.Where("milestone_id in (?)", milestoneIds...).All(&milestoneNotes)
+	if err == nil {
+		for _, note := range milestoneNotes {
+			noteOptions[note.Title] = note.ID.String()
+			noteIdsToNameMap[note.ID.String()] = note.Title
+		}
+	} else {
+		c.Logger().Errorf("Error getting notes: %v", err)
+	}
+
+	taskNotes := []models.Note{}
+	err = models.DB.Where("task_id in (?)", taskIds...).All(&taskNotes)
+	if err == nil {
+		for _, note := range taskNotes {
+			noteOptions[note.Title] = note.ID.String()
+			noteIdsToNameMap[note.ID.String()] = note.Title
+		}
+	} else {
+		c.Logger().Errorf("Error getting notes: %v", err)
+	}
+	c.Set("noteOptions", noteOptions)
+	c.Set("noteIdsToNameMap", noteIdsToNameMap)
+}
+
 // List gets all Notes. This function is mapped to the path
 // GET /notes
 func (v NotesResource) List(c buffalo.Context) error {
@@ -38,6 +145,7 @@ func (v NotesResource) List(c buffalo.Context) error {
 	}
 
 	notes := &models.Notes{}
+	setPageContextForNotes(c)
 
 	// Paginate results. Params "page" and "per_page" control pagination.
 	// Default values are "page=1" and "per_page=20".
@@ -72,6 +180,7 @@ func (v NotesResource) Show(c buffalo.Context) error {
 
 	// Allocate an empty Note
 	note := &models.Note{}
+	setPageContextForNotes(c)
 
 	// To find the Note the parameter note_id is used.
 	if err := tx.Find(note, c.Param("note_id")); err != nil {
@@ -93,6 +202,7 @@ func (v NotesResource) Show(c buffalo.Context) error {
 // This function is mapped to the path GET /notes/new
 func (v NotesResource) New(c buffalo.Context) error {
 	c.Set("note", &models.Note{})
+	setPageContextForNotes(c)
 
 	return c.Render(http.StatusOK, r.HTML("notes/new.plush.html"))
 }
@@ -102,6 +212,7 @@ func (v NotesResource) New(c buffalo.Context) error {
 func (v NotesResource) Create(c buffalo.Context) error {
 	// Allocate an empty Note
 	note := &models.Note{}
+	setPageContextForNotes(c)
 
 	// Bind note to the html form elements
 	if err := c.Bind(note); err != nil {
@@ -161,6 +272,7 @@ func (v NotesResource) Edit(c buffalo.Context) error {
 
 	// Allocate an empty Note
 	note := &models.Note{}
+	setPageContextForNotes(c)
 
 	if err := tx.Find(note, c.Param("note_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)
