@@ -81,28 +81,28 @@ func App() *buffalo.App {
 		app.Use(SetCurrentUser)
 		app.Use(Authorize)
 
-		app.Resource("/goals", GoalsResource{})
 		app.GET("/", HomeHandler)
+		app.GET("/routes", RouteDetailsHandler)
+
+		app.Resource("/goals", GoalsResource{})
 		app.Resource("/milestones", MilestonesResource{})
+		app.Resource("/tasks", TasksResource{})
+		app.Resource("/notes", NotesResource{})
 
 		// Routes for User
 		userResource := UsersResource{}
 		app.Resource("/users", userResource)
 
-		// Routes for Tasks
-		app.Resource("/tasks", TasksResource{})
-
 		//Routes for Auth
 		auth := app.Group("/auth")
 		auth.GET("/", AuthLanding)
-		auth.GET("/new", AuthNew)
+		auth.GET("/sign-in", AuthNew)
 		auth.POST("/", AuthCreate)
 		auth.DELETE("/", AuthDestroy)
 		auth.GET("/sign-up", userResource.New)
 		auth.POST("/register-new-user", userResource.Create)
 		auth.Middleware.Skip(Authorize, AuthLanding, AuthNew, AuthCreate, userResource.New, userResource.Create)
 
-		app.Resource("/notes", NotesResource{})
 		app.ServeFiles("/", http.FS(public.FS())) // serve files from the public directory
 	})
 

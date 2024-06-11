@@ -5,7 +5,7 @@
         <a href="<%= rootPath() %>"><img src="<%= rootPath() %>assets/images/logo.svg" alt=""></a>
       </div>
       <div class="col-md-9 col-sm-9 col-xs-10 titles">
-        <h1><%= t("welcome_greeting") %></h1>
+        <h1><%= t("welcome_greeting") %> <%= current_user.Name %></h1>
         <h2>
           <a href="https://github.com/gobuffalo/buffalo"><i class="fab fa-github" aria-hidden="true"></i> https://github.com/gobuffalo/buffalo</a>
         </h2>
@@ -22,40 +22,58 @@
   <div class="col-md-12">
     <div class="subtitle">
       <div class="container">
-        <h3>Defined Routes</h3>
+        <h3>Your Goals</h3>
       </div>
     </div>
     <div class="table-responsive">
       <table class="table table-striped">
-        <thead>
-          <tr text-align="left">
-            <th class="centered">METHOD</th>
-            <th>PATH</th>
-            <th>NAME</th>
-            <th>HANDLER</th>
-          </tr>
+        <thead class="thead-light">
+          <th>Title</th><th>Progress</th><th>TargetDate</th><th>Priority</th><th>Tags</th><th>Active</th><th>Public</th>
+          <th>&nbsp;</th>
         </thead>
         <tbody>
-
-          <%= for (r) in routes { %>
+          <%= for (goal) in goals { %>
             <tr>
-              <td class="centered">
-                <%= r.Method %>
+              <td class="align-middle"><%= goal.Title %></td>
+              <td class="align-middle">
+                <%= if (goal.CompletionFactor.Valid) { %>
+                  <p class="d-inline-block"><%= goal.CompletionFactor %></p>
+                <% } else { %>
+                  <p class="d-inline-block">0 %</p>
+                <% } %>
+              </td>
+              <td class="align-middle"><%= goal.TargetDate %></td>
+              <td class="align-middle">
+                <%= if (goal.Priority.Valid) { %>
+                  <p class="d-inline-block"><%= priorityIdsToNameMapping[goal.Priority.Int] %></p>
+                <% } else { %>
+                  <p class="d-inline-block">Unknown</p>
+                <% } %>
+              </td>
+              <td class="align-middle"><%= goal.Tags %></td>
+              <td class="align-middle">
+                <%= if (goal.Active.Bool) { %>
+                  <p class="d-inline-block">&#10004;</p>
+                <% } else { %>
+                  <p class="d-inline-block">&#10060;</p>
+                <% } %>
+              </td>
+              <td class="align-middle">
+                <%= if (goal.Public.Bool) { %>
+                  <p class="d-inline-block">&#10004;</p>
+                <% } else { %>
+                  <p class="d-inline-block">&#10060;</p>
+                <% } %>
               </td>
               <td>
-                <%= if (r.Method != "GET" || r.Path ~= "{") { %><%=
-                  r.Path %><%
-                } else { %><%=
-                  linkTo(r.Path, {body: r.Path}) %><%
-                } %>
+                <div class="float-end">
+                  <%= linkTo(goalPath({ goal_id: goal.ID }), {class: "btn btn-info", body: "View"}) %>
+                  <%= linkTo(editGoalPath({ goal_id: goal.ID }), {class: "btn btn-warning", body: "Edit"}) %>
+                  <%= linkTo(goalPath({ goal_id: goal.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+                </div>
               </td>
-              <td>
-                <%= r.PathName %>
-              </td>
-              <td><code><%= r.HandlerName %></code></td>
             </tr>
           <% } %>
-
         </tbody>
       </table>
     </div>

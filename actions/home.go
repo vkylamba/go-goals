@@ -1,14 +1,47 @@
 package actions
 
 import (
+	"fmt"
+	"go_goals/models"
 	"net/http"
 
 	"github.com/gobuffalo/buffalo"
+	"github.com/gobuffalo/pop/v6"
 )
+
+func setPageContextForHome(c buffalo.Context) {
+	c.Set("priorityOptions", PRIORITY_OPTIONS)
+	c.Set("priorityIdsToNameMapping", PRIORITY_IDS_TO_NAME)
+}
+
+// HomeHandler is a default handler to serve up
+// a home page.
+func RouteDetailsHandler(c buffalo.Context) error {
+	return c.Render(http.StatusOK, r.HTML("home/routes.plush.html"))
+}
 
 // HomeHandler is a default handler to serve up
 // a home page.
 func HomeHandler(c buffalo.Context) error {
+	currentUserId := c.Session().Get("current_user_id")
+
+	// Get the DB connection from the context
+	tx, ok := c.Value("tx").(*pop.Connection)
+	if !ok {
+		return fmt.Errorf("no transaction found")
+	}
+
+	goals := &models.Goals{}
+	// Default values are "page=1" and "per_page=20".
+	q := tx.PaginateFromParams(c.Params())
+
+	// Retrieve all Goals from the DB
+	if err := q.Where("user_id =? and active = 1", currentUserId).All(goals); err != nil {
+		return err
+	}
+	setPageContextForHome(c)
+	c.Set("pagination", q.Paginator)
+	c.Set("goals", goals)
 	return c.Render(http.StatusOK, r.HTML("home/index.plush.html"))
 }
 
