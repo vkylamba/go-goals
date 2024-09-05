@@ -16,7 +16,7 @@ import (
 type Task struct {
 	ID                 uuid.UUID     `json:"id" db:"id"`
 	GoalID             uuid.UUID     `json:"goal_id" db:"goal_id"`
-	MilestoneID        nulls.UUID    `json:"milestone_id" db:"milestone_id"`
+	MilestoneID        *uuid.UUID    `json:"milestone_id" db:"milestone_id"`
 	Title              string        `json:"title" db:"title"`
 	Description        nulls.String  `json:"description" db:"description"`
 	ContributionFactor nulls.Float32 `json:"contribution_factor" db:"contribution_factor"`
@@ -63,4 +63,14 @@ func (t *Task) ValidateCreate(tx *pop.Connection) (*validate.Errors, error) {
 // This method is not required and may be deleted.
 func (t *Task) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 	return validate.NewErrors(), nil
+}
+
+func (t *Task) GetForUser(q *pop.Query, goalIds, milestoneIds []interface{}) ([]Task, error) {
+	tasks := make([]Task, 0)
+	// q.RawSQL(`select task.* from task where task.goal_id in (?) or task.milestone_id in (?)`).
+	q.Where(`active = 1`)
+	q.Where(`goal_id in (?)`, goalIds...)
+	q.Where(`milestone_id in (?)`, milestoneIds...)
+	err := q.All(&tasks)
+	return tasks, err
 }

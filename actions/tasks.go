@@ -28,7 +28,7 @@ type TasksResource struct {
 	buffalo.Resource
 }
 
-func setPageContextForTasks(c buffalo.Context) {
+func SetPageContextForTasks(c buffalo.Context) ([]interface{}, []interface{}) {
 	c.Set("priorityOptions", PRIORITY_OPTIONS)
 	c.Set("priorityIdsToNameMapping", PRIORITY_IDS_TO_NAME)
 	currentUser := c.Value("current_user").(*models.User)
@@ -49,12 +49,14 @@ func setPageContextForTasks(c buffalo.Context) {
 	c.Set("goalOptions", goalOptions)
 	c.Set("goalIdsToNameMap", goalIdsToNameMap)
 
+	var milestoneIds []interface{}
 	milestoneOptions := make(map[string]string)
-	milestoneIdsToNameMap := make(map[any]string)
+	milestoneIdsToNameMap := make(map[string]string)
 	milestones := []models.Milestone{}
 	err = models.DB.Where("goal_id in (?)", goalIds...).All(&milestones)
 	if err == nil {
 		for _, milestone := range milestones {
+			milestoneIds = append(milestoneIds, milestone.ID.String())
 			milestoneOptions[milestone.Title] = milestone.ID.String()
 			milestoneIdsToNameMap[milestone.ID.String()] = milestone.Title
 		}
@@ -63,6 +65,7 @@ func setPageContextForTasks(c buffalo.Context) {
 	}
 	c.Set("milestoneOptions", milestoneOptions)
 	c.Set("milestoneIdsToNameMap", milestoneIdsToNameMap)
+	return goalIds, milestoneIds
 }
 
 // List gets all Tasks. This function is mapped to the path
@@ -75,7 +78,7 @@ func (v TasksResource) List(c buffalo.Context) error {
 	}
 
 	tasks := &models.Tasks{}
-	setPageContextForTasks(c)
+	SetPageContextForTasks(c)
 
 	// Paginate results. Params "page" and "per_page" control pagination.
 	// Default values are "page=1" and "per_page=20".
@@ -110,7 +113,7 @@ func (v TasksResource) Show(c buffalo.Context) error {
 
 	// Allocate an empty Task
 	task := &models.Task{}
-	setPageContextForTasks(c)
+	SetPageContextForTasks(c)
 
 	// To find the Task the parameter task_id is used.
 	if err := tx.Find(task, c.Param("task_id")); err != nil {
@@ -132,7 +135,7 @@ func (v TasksResource) Show(c buffalo.Context) error {
 // This function is mapped to the path GET /tasks/new
 func (v TasksResource) New(c buffalo.Context) error {
 	c.Set("task", &models.Task{})
-	setPageContextForTasks(c)
+	SetPageContextForTasks(c)
 
 	return c.Render(http.StatusOK, r.HTML("tasks/new.plush.html"))
 }
@@ -201,7 +204,7 @@ func (v TasksResource) Edit(c buffalo.Context) error {
 
 	// Allocate an empty Task
 	task := &models.Task{}
-	setPageContextForTasks(c)
+	SetPageContextForTasks(c)
 
 	if err := tx.Find(task, c.Param("task_id")); err != nil {
 		return c.Error(http.StatusNotFound, err)

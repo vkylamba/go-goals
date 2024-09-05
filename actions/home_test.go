@@ -9,7 +9,7 @@ import (
 func (as *ActionSuite) Test_HomeHandler() {
 	res := as.HTML("/").Get()
 	as.Equal(http.StatusFound, res.Code)
-	as.Equal(res.Location(), "/auth/new")
+	as.Equal(res.Location(), "/auth/sign-in")
 }
 
 func (as *ActionSuite) Test_HomeHandler_LoggedIn() {

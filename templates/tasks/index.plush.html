@@ -12,7 +12,8 @@
     <th>Goal</th>
     <th>Milestone</th>
     <th>Title</th>
-    <th>ContributionFactor</th>
+    <th>Completion Percentage</th>
+    <th>Contribution Factor</th>
     <th>TargetDate</th>
     <th>Priority</th>
     <th>Tags</th>
@@ -25,14 +26,14 @@
       <tr>
         <td class="align-middle"><%= goalIdsToNameMap[task.GoalID.String()] %></td>
         <td class="align-middle">
-          <%= if (task.MilestoneID.Valid) { %>
-            <p class="d-inline-block"><%= task.MilestoneID.String() %></p>
-            <p class="d-inline-block"><%= milestoneIdsToNameMap[task.MilestoneID] %></p>
+          <%= if (task.MilestoneID) { %>
+            <p class="d-inline-block"><%= milestoneIdsToNameMap[task.MilestoneID.String()] %></p>
           <% } else { %>
             <p class="d-inline-block">Unknown</p>
           <% } %>
         </td>
         <td class="align-middle"><%= task.Title %></td>
+        <td class="align-middle"><%= task.CompletionFactor %></td>
         <td class="align-middle"><%= task.ContributionFactor %></td>
         <td class="align-middle"><%= task.TargetDate %></td>
         <td class="align-middle">

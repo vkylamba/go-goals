@@ -7,7 +7,7 @@
       <div class="col-md-9 col-sm-9 col-xs-10 titles">
         <h1><%= t("welcome_greeting") %> <%= current_user.Name %></h1>
         <h2>
-          <a href="https://github.com/gobuffalo/buffalo"><i class="fab fa-github" aria-hidden="true"></i> https://github.com/gobuffalo/buffalo</a>
+          <a href="https://github.com/vkylamba/go-goals"><i class="fab fa-github" aria-hidden="true"></i> https://github.com/vkylamba/go-goals</a>
         </h2>
         <h2 class="documentation">
           <a href="http://gobuffalo.io/"><i class="fa fa-book" aria-hidden="true"></i> Documentation</a>
@@ -22,44 +22,56 @@
   <div class="col-md-12">
     <div class="subtitle">
       <div class="container">
-        <h3>Your Goals</h3>
+        <h3>Tasks for <%= time_window %></h3>
       </div>
     </div>
     <div class="table-responsive">
-      <table class="table table-striped">
+      <table class="table table-hover table-bordered">
         <thead class="thead-light">
-          <th>Title</th><th>Progress</th><th>TargetDate</th><th>Priority</th><th>Tags</th><th>Active</th><th>Public</th>
+          <th>Goal</th>
+          <th>Milestone</th>
+          <th>Title</th>
+          <th>Completion Percentage</th>
+          <th>Contribution Factor</th>
+          <th>TargetDate</th>
+          <th>Priority</th>
+          <th>Tags</th>
+          <th>Active</th>
+          <th>Public</th>
           <th>&nbsp;</th>
         </thead>
         <tbody>
-          <%= for (goal) in goals { %>
+          <%= for (task) in tasks { %>
             <tr>
-              <td class="align-middle"><%= goal.Title %></td>
+              <td class="align-middle"><%= goalIdsToNameMap[task.GoalID.String()] %></td>
               <td class="align-middle">
-                <%= if (goal.CompletionFactor.Valid) { %>
-                  <p class="d-inline-block"><%= goal.CompletionFactor %></p>
-                <% } else { %>
-                  <p class="d-inline-block">0 %</p>
-                <% } %>
-              </td>
-              <td class="align-middle"><%= goal.TargetDate %></td>
-              <td class="align-middle">
-                <%= if (goal.Priority.Valid) { %>
-                  <p class="d-inline-block"><%= priorityIdsToNameMapping[goal.Priority.Int] %></p>
+                <%= if (task.MilestoneID) { %>
+                  <p class="d-inline-block"><%= milestoneIdsToNameMap[task.MilestoneID.String()] %></p>
                 <% } else { %>
                   <p class="d-inline-block">Unknown</p>
                 <% } %>
               </td>
-              <td class="align-middle"><%= goal.Tags %></td>
+              <td class="align-middle"><%= task.Title %></td>
+              <td class="align-middle"><%= task.CompletionFactor %></td>
+              <td class="align-middle"><%= task.ContributionFactor %></td>
+              <td class="align-middle"><%= task.TargetDate %></td>
               <td class="align-middle">
-                <%= if (goal.Active.Bool) { %>
+                <%= if (task.Priority.Valid) { %>
+                  <p class="d-inline-block"><%= priorityIdsToNameMapping[task.Priority.Int] %></p>
+                <% } else { %>
+                  <p class="d-inline-block">Unknown</p>
+                <% } %>
+              </td>
+              <td class="align-middle"><%= task.Tags %></td>
+              <td class="align-middle">
+                <%= if (task.Active.Bool) { %>
                   <p class="d-inline-block">&#10004;</p>
                 <% } else { %>
                   <p class="d-inline-block">&#10060;</p>
                 <% } %>
               </td>
               <td class="align-middle">
-                <%= if (goal.Public.Bool) { %>
+                <%= if (task.Public.Bool) { %>
                   <p class="d-inline-block">&#10004;</p>
                 <% } else { %>
                   <p class="d-inline-block">&#10060;</p>
@@ -67,9 +79,9 @@
               </td>
               <td>
                 <div class="float-end">
-                  <%= linkTo(goalPath({ goal_id: goal.ID }), {class: "btn btn-info", body: "View"}) %>
-                  <%= linkTo(editGoalPath({ goal_id: goal.ID }), {class: "btn btn-warning", body: "Edit"}) %>
-                  <%= linkTo(goalPath({ goal_id: goal.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+                  <%= linkTo(taskPath({ task_id: task.ID }), {class: "btn btn-info", body: "View"}) %>
+                  <%= linkTo(editTaskPath({ task_id: task.ID }), {class: "btn btn-warning", body: "Edit"}) %>
+                  <%= linkTo(taskPath({ task_id: task.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
                 </div>
               </td>
             </tr>

@@ -23,11 +23,11 @@ func (as *ActionSuite) createUser() (*models.User, error) {
 func (as *ActionSuite) Test_Auth_Signin() {
 	res := as.HTML("/auth/").Get()
 	as.Equal(http.StatusOK, res.Code)
-	as.Contains(res.Body.String(), `<a href="/auth/new/">Sign In</a>`)
+	as.Contains(res.Body.String(), `<a href="/auth/sign-in/">Sign In</a>`)
 }
 
 func (as *ActionSuite) Test_Auth_New() {
-	res := as.HTML("/auth/new").Get()
+	res := as.HTML("/auth/sign-in").Get()
 	as.Equal(http.StatusOK, res.Code)
 	as.Contains(res.Body.String(), "Sign In")
 }

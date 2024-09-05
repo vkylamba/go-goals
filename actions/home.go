@@ -9,11 +9,6 @@ import (
 	"github.com/gobuffalo/pop/v6"
 )
 
-func setPageContextForHome(c buffalo.Context) {
-	c.Set("priorityOptions", PRIORITY_OPTIONS)
-	c.Set("priorityIdsToNameMapping", PRIORITY_IDS_TO_NAME)
-}
-
 // HomeHandler is a default handler to serve up
 // a home page.
 func RouteDetailsHandler(c buffalo.Context) error {
@@ -23,25 +18,23 @@ func RouteDetailsHandler(c buffalo.Context) error {
 // HomeHandler is a default handler to serve up
 // a home page.
 func HomeHandler(c buffalo.Context) error {
-	currentUserId := c.Session().Get("current_user_id")
-
+	time_window := "today"
 	// Get the DB connection from the context
 	tx, ok := c.Value("tx").(*pop.Connection)
 	if !ok {
 		return fmt.Errorf("no transaction found")
 	}
-
-	goals := &models.Goals{}
+	goalIds, milestoneIds := SetPageContextForTasks(c)
 	// Default values are "page=1" and "per_page=20".
 	q := tx.PaginateFromParams(c.Params())
-
-	// Retrieve all Goals from the DB
-	if err := q.Where("user_id =? and active = 1", currentUserId).All(goals); err != nil {
+	var task models.Task
+	tasks, err := task.GetForUser(q, goalIds, milestoneIds)
+	if err != nil {
 		return err
 	}
-	setPageContextForHome(c)
+	c.Set("time_window", time_window)
 	c.Set("pagination", q.Paginator)
-	c.Set("goals", goals)
+	c.Set("tasks", tasks)
 	return c.Render(http.StatusOK, r.HTML("home/index.plush.html"))
 }
 

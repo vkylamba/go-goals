@@ -234,7 +234,7 @@ func SetCurrentUser(next buffalo.Handler) buffalo.Handler {
 				c.Session().Delete("current_user_id")
 				c.Session().Set("redirectURL", c.Request().URL.String())
 				c.Flash().Add("danger", "You must be authorized with a correct user to see that page")
-				return c.Redirect(http.StatusFound, "/auth/new")
+				return c.Redirect(http.StatusFound, "/auth/sign-in")
 			}
 			c.Set("current_user", u)
 		}
@@ -254,7 +254,7 @@ func Authorize(next buffalo.Handler) buffalo.Handler {
 			}
 
 			c.Flash().Add("danger", "You must be authorized to see that page")
-			return c.Redirect(http.StatusFound, "/auth/new")
+			return c.Redirect(http.StatusFound, "/auth/sign-in")
 		}
 		return next(c)
 	}
