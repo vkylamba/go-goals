@@ -1,9 +1,46 @@
-<div class="py-4 mb-2">
-  <h3 class="d-inline-block">Tasks</h3>
-  <div class="float-end">
-    <%= linkTo(newTasksPath(), {class: "btn btn-primary"}) { %>
-      Create New Task
-    <% } %>
+<header>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-1 col-sm-2 col-xs-2 logo">
+        <a href="<%= rootPath() %>"><img src="<%= rootPath() %>assets/images/logo.svg" alt=""></a>
+      </div>
+      <div class="col-md-9 col-sm-9 col-xs-10 titles">
+        <h1><%= t("welcome_greeting") %> <%= current_user.Name %></h1>
+        <h2>
+          <a href="https://github.com/vkylamba/go-goals"><i class="fab fa-github" aria-hidden="true"></i> https://github.com/vkylamba/go-goals</a>
+        </h2>
+        <h2 class="documentation">
+          <a href="http://gobuffalo.io/"><i class="fa fa-book" aria-hidden="true"></i> Documentation</a>
+        </h2>
+      </div>
+    </div>
+  </div>
+
+</header>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="subtitle">
+      <div class="container">
+        <h3>Milestones
+          <div class="float-end">
+            <%= linkTo("/", {class: "btn btn-info"}) { %>
+              Home
+            <% } %>
+            <%= linkTo("/goals", {class: "btn btn-info"}) { %>
+              Goals
+            <% } %>
+            <%= linkTo("/milestones", {class: "btn btn-info"}) { %>
+              Milestones
+            <% } %>
+            <%= linkTo(newTasksPath(), {class: "btn btn-primary"}) { %>
+              Create New Task
+            <% } %>
+          </div>
+        </h3>
+        <p><p>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -24,12 +61,14 @@
   <tbody>
     <%= for (task) in tasks { %>
       <tr>
-        <td class="align-middle"><%= goalIdsToNameMap[task.GoalID.String()] %></td>
+        <td class="align-middle">
+          <%= linkTo(editGoalPath({ goal_id: task.GoalID }), {class: "link", body: goalIdsToNameMap[task.GoalID.String()]}) %>
+        </td>
         <td class="align-middle">
           <%= if (task.MilestoneID) { %>
-            <p class="d-inline-block"><%= milestoneIdsToNameMap[task.MilestoneID.String()] %></p>
+            <%= linkTo(editMilestonePath({ milestone_id: task.MilestoneID }), {class: "link", body: milestoneIdsToNameMap[task.MilestoneID.String()]}) %>
           <% } else { %>
-            <p class="d-inline-block">Unknown</p>
+            Unknown
           <% } %>
         </td>
         <td class="align-middle"><%= task.Title %></td>

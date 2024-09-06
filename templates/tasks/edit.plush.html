@@ -1,5 +1,15 @@
 <div class="py-4 mb-2">
-  <h3 class="d-inline-block">Edit Task</h3>
+  <h3 class="d-inline-block">Edit Task Details</h3>
+
+  <div class="float-end">
+    <%= linkTo("/", {class: "btn btn-info"}) { %>
+      Home
+    <% } %>
+    <%= linkTo(tasksPath(), {class: "btn btn-info"}) { %>
+      Back to all Tasks
+    <% } %>
+    <%= linkTo(taskPath({ task_id: task.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
+  </div>
 </div>
 
 <%= formFor(task, {action: taskPath({ task_id: task.ID }), method: "PUT"}) { %>

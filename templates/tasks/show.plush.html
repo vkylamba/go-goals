@@ -2,6 +2,9 @@
   <h3 class="d-inline-block">Task Details</h3>
 
   <div class="float-end">
+    <%= linkTo("/", {class: "btn btn-info"}) { %>
+      Home
+    <% } %>
     <%= linkTo(tasksPath(), {class: "btn btn-info"}) { %>
       Back to all Tasks
     <% } %>
@@ -11,28 +14,23 @@
 </div>
 
 
-
 <ul class="list-group mb-2 ">
 
 
   <li class="list-group-item pb-1">
     <label class="small d-block">Goal</label>
-    <p class="d-inline-block"><%= goalIdsToNameMap[task.GoalID.String()] %></p>
+    <p class="d-inline-block"><%= linkTo(editGoalPath({ goal_id: task.GoalID }), {class: "link", body: goalIdsToNameMap[task.GoalID.String()]}) %></p>
   </li>
 
   <li class="list-group-item pb-1">
     <label class="small d-block">Milestone</label>
-    <p class="d-inline-block"><%= milestoneIdsToNameMap[task.MilestoneID.String()] %></p>
+    <p class="d-inline-block"><%= linkTo(editMilestonePath({ milestone_id: task.MilestoneID }), {class: "link", body: milestoneIdsToNameMap[task.MilestoneID.String()]}) %></p>
   </li>
-
-
 
   <li class="list-group-item pb-1">
     <label class="small d-block">Title</label>
     <p class="d-inline-block"><%= task.Title %></p>
   </li>
-
-
 
   <li class="list-group-item pb-1">
     <label class="small d-block">Description</label>
@@ -57,7 +55,10 @@
     <p class="d-inline-block"><%= task.TargetDate %></p>
   </li>
 
-
+  <li class="list-group-item pb-1">
+    <label class="small d-block">CompletionDate</label>
+    <p class="d-inline-block"><%= task.CompletionDate %></p>
+  </li>
 
   <li class="list-group-item pb-1">
     <label class="small d-block">Priority</label>

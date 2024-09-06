@@ -1,9 +1,46 @@
-<div class="py-4 mb-2">
-  <h3 class="d-inline-block">Goals</h3>
-  <div class="float-end">
-    <%= linkTo(newGoalsPath(), {class: "btn btn-primary"}) { %>
-      Create New Goal
-    <% } %>
+<header>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-1 col-sm-2 col-xs-2 logo">
+        <a href="<%= rootPath() %>"><img src="<%= rootPath() %>assets/images/logo.svg" alt=""></a>
+      </div>
+      <div class="col-md-9 col-sm-9 col-xs-10 titles">
+        <h1><%= t("welcome_greeting") %> <%= current_user.Name %></h1>
+        <h2>
+          <a href="https://github.com/vkylamba/go-goals"><i class="fab fa-github" aria-hidden="true"></i> https://github.com/vkylamba/go-goals</a>
+        </h2>
+        <h2 class="documentation">
+          <a href="http://gobuffalo.io/"><i class="fa fa-book" aria-hidden="true"></i> Documentation</a>
+        </h2>
+      </div>
+    </div>
+  </div>
+
+</header>
+
+<div class="row">
+  <div class="col-md-12">
+    <div class="subtitle">
+      <div class="container">
+        <h3>Goals
+          <div class="float-end">
+            <%= linkTo("/", {class: "btn btn-info"}) { %>
+              Home
+            <% } %>
+            <%= linkTo("/milestones", {class: "btn btn-info"}) { %>
+              Milestones
+            <% } %>
+            <%= linkTo("/tasks", {class: "btn btn-info"}) { %>
+              Tasks
+            <% } %>
+            <%= linkTo(newGoalsPath(), {class: "btn btn-primary"}) { %>
+              Create New Goal
+            <% } %>
+          </div>
+        </h3>
+        <p><p>
+      </div>
+    </div>
   </div>
 </div>
 

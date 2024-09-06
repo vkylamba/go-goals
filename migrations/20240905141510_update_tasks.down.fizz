@@ -1,0 +1,1 @@
+drop_column("tasks", "completion_date");

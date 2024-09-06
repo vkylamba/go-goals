@@ -57,7 +57,7 @@ CREATE TABLE IF NOT EXISTS "tasks" (
 "public" bool,
 "created_at" DATETIME NOT NULL,
 "updated_at" DATETIME NOT NULL
-);
+, "completion_date" DATETIME);
 CREATE TABLE IF NOT EXISTS "notes" (
 "id" TEXT PRIMARY KEY,
 "goal_id" char(36),

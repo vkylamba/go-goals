@@ -2,6 +2,7 @@ package models
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/gobuffalo/nulls"
@@ -22,6 +23,7 @@ type Task struct {
 	ContributionFactor nulls.Float32 `json:"contribution_factor" db:"contribution_factor"`
 	CompletionFactor   nulls.Float32 `json:"completion_factor" db:"completion_factor"`
 	TargetDate         nulls.Time    `json:"target_date" db:"target_date"`
+	CompletionDate     nulls.Time    `json:"completion_date" db:"completion_date"`
 	Priority           nulls.Int     `json:"priority" db:"priority"`
 	Tags               slices.String `json:"tags" db:"tags"`
 	Active             nulls.Bool    `json:"active" db:"active"`
@@ -67,10 +69,32 @@ func (t *Task) ValidateUpdate(tx *pop.Connection) (*validate.Errors, error) {
 
 func (t *Task) GetForUser(q *pop.Query, goalIds, milestoneIds []interface{}) ([]Task, error) {
 	tasks := make([]Task, 0)
-	// q.RawSQL(`select task.* from task where task.goal_id in (?) or task.milestone_id in (?)`).
-	q.Where(`active = 1`)
-	q.Where(`goal_id in (?)`, goalIds...)
-	q.Where(`milestone_id in (?)`, milestoneIds...)
+	goalIdsStr := ""
+	milestoneIdsStr := ""
+	for _, i := range goalIds {
+		goalIdsStr += fmt.Sprintf("'%v',", i)
+	}
+	goalIdsStr = "(" + goalIdsStr[:len(goalIdsStr)-1] + ")"
+
+	for _, i := range milestoneIds {
+		milestoneIdsStr += fmt.Sprintf("'%v',", i)
+	}
+	milestoneIdsStr = "(" + milestoneIdsStr[:len(milestoneIdsStr)-1] + ")"
+
+	query := `
+		select *
+		from tasks
+		where
+			(
+				goal_id in ` + goalIdsStr + `
+				or
+				goal_id in ` + milestoneIdsStr + `
+			)
+			and active = 1
+			and completion_date is null
+	`
+
+	q.RawQuery(query)
 	err := q.All(&tasks)
 	return tasks, err
 }

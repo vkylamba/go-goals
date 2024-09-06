@@ -22,9 +22,27 @@
   <div class="col-md-12">
     <div class="subtitle">
       <div class="container">
-        <h3>Tasks for <%= time_window %></h3>
+        <h3>Tasks for <%= time_window %>
+          <div class="float-end">
+            <%= linkTo("/goals", {class: "btn btn-info"}) { %>
+              Goals
+            <% } %>
+            <%= linkTo("/milestones", {class: "btn btn-info"}) { %>
+              Milestones
+            <% } %>
+            <%= linkTo("/tasks", {class: "btn btn-info"}) { %>
+              Tasks
+            <% } %>
+          </div>
+        </h3>
+        <p><p>
       </div>
     </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-12">
     <div class="table-responsive">
       <table class="table table-hover table-bordered">
         <thead class="thead-light">
@@ -32,57 +50,27 @@
           <th>Milestone</th>
           <th>Title</th>
           <th>Completion Percentage</th>
-          <th>Contribution Factor</th>
           <th>TargetDate</th>
-          <th>Priority</th>
-          <th>Tags</th>
-          <th>Active</th>
-          <th>Public</th>
           <th>&nbsp;</th>
         </thead>
         <tbody>
           <%= for (task) in tasks { %>
-            <tr>
-              <td class="align-middle"><%= goalIdsToNameMap[task.GoalID.String()] %></td>
+            <tr class="task-item priority-<%= priorityIdsToNameMapping[task.Priority.Int] %>">
+              <td class="align-middle">
+                <%= linkTo(editGoalPath({ goal_id: task.GoalID }), {class: "link", body: goalIdsToNameMap[task.GoalID.String()]}) %>
+              </td>
               <td class="align-middle">
                 <%= if (task.MilestoneID) { %>
-                  <p class="d-inline-block"><%= milestoneIdsToNameMap[task.MilestoneID.String()] %></p>
+                  <%= linkTo(editMilestonePath({ milestone_id: task.MilestoneID }), {class: "link", body: milestoneIdsToNameMap[task.MilestoneID.String()]}) %>
                 <% } else { %>
-                  <p class="d-inline-block">Unknown</p>
+                  Unknown
                 <% } %>
               </td>
               <td class="align-middle"><%= task.Title %></td>
               <td class="align-middle"><%= task.CompletionFactor %></td>
-              <td class="align-middle"><%= task.ContributionFactor %></td>
               <td class="align-middle"><%= task.TargetDate %></td>
-              <td class="align-middle">
-                <%= if (task.Priority.Valid) { %>
-                  <p class="d-inline-block"><%= priorityIdsToNameMapping[task.Priority.Int] %></p>
-                <% } else { %>
-                  <p class="d-inline-block">Unknown</p>
-                <% } %>
-              </td>
-              <td class="align-middle"><%= task.Tags %></td>
-              <td class="align-middle">
-                <%= if (task.Active.Bool) { %>
-                  <p class="d-inline-block">&#10004;</p>
-                <% } else { %>
-                  <p class="d-inline-block">&#10060;</p>
-                <% } %>
-              </td>
-              <td class="align-middle">
-                <%= if (task.Public.Bool) { %>
-                  <p class="d-inline-block">&#10004;</p>
-                <% } else { %>
-                  <p class="d-inline-block">&#10060;</p>
-                <% } %>
-              </td>
               <td>
-                <div class="float-end">
-                  <%= linkTo(taskPath({ task_id: task.ID }), {class: "btn btn-info", body: "View"}) %>
-                  <%= linkTo(editTaskPath({ task_id: task.ID }), {class: "btn btn-warning", body: "Edit"}) %>
-                  <%= linkTo(taskPath({ task_id: task.ID }), {class: "btn btn-danger", "data-method": "DELETE", "data-confirm": "Are you sure?", body: "Destroy"}) %>
-                </div>
+                <button class="btn" onclick="navigateToTask('<%=task.ID%>')"><i class="fa fa-eye"></i></button>
               </td>
             </tr>
           <% } %>
@@ -91,4 +79,9 @@
     </div>
   </div>
 </div>
-<div class="foot"> <span> Powered by <a href="http://gobuffalo.io/">gobuffalo.io</a></span> </div>
+<div class="foot"> <span> Powered by <a href=""></a></span> </div>
+<script>
+  function navigateToTask(taskId) {
+    window.location = `/tasks/${taskId}/edit`;
+  }
+</script>
