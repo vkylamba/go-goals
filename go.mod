@@ -1,6 +1,6 @@
 module go_goals
 
-go 1.21.5
+go 1.18
 
 require (
 	github.com/gobuffalo/buffalo v1.1.0
@@ -71,7 +71,6 @@ require (
 	github.com/pelletier/go-toml v1.2.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rogpeppe/go-internal v1.9.0 // indirect
-	github.com/samber/lo v1.47.0 // indirect
 	github.com/sergi/go-diff v1.2.0 // indirect
 	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/sourcegraph/annotate v0.0.0-20160123013949-f4cad6c6324d // indirect

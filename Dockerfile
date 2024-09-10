@@ -7,12 +7,14 @@ ENV GOPROXY http://proxy.golang.org
 RUN mkdir -p /src/go_goals
 WORKDIR /src/go_goals
 
+# Upgrade node
+RUN npm cache clean -f
+RUN npm install -g n
+RUN n v20.10.0
+
 # this will cache the npm install step, unless package.json changes
 ADD package.json .
-ADD yarn.lock .yarnrc.yml ./
-RUN mkdir .yarn
-COPY .yarn .yarn
-RUN yarn install
+RUN npm install
 # Copy the Go Modules manifests
 COPY go.mod go.mod
 COPY go.sum go.sum
@@ -32,7 +34,7 @@ WORKDIR /bin/
 COPY --from=builder /bin/app .
 
 # Uncomment to run the binary in "production" mode:
-# ENV GO_ENV=production
+ENV GO_ENV=production
 
 # Bind the app to 0.0.0.0 so it can be seen from outside the container
 ENV ADDR=0.0.0.0
@@ -40,5 +42,5 @@ ENV ADDR=0.0.0.0
 EXPOSE 3000
 
 # Uncomment to run the migrations before running the binary:
-# CMD /bin/app migrate; /bin/app
+CMD /bin/app migrate; /bin/app
 CMD exec /bin/app

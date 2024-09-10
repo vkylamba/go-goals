@@ -1,0 +1,10 @@
+version: "3"
+services:
+  app:
+    build: .
+    volumes:
+      - ./:/src/go_goals
+    command: "tail -f /dev/null"
+    working_dir: /src/go_goals
+    ports:
+      - 3000:3000
