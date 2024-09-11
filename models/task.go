@@ -74,22 +74,36 @@ func (t *Task) GetForUser(q *pop.Query, goalIds, milestoneIds []interface{}) ([]
 	for _, i := range goalIds {
 		goalIdsStr += fmt.Sprintf("'%v',", i)
 	}
-	goalIdsStr = "(" + goalIdsStr[:len(goalIdsStr)-1] + ")"
+	if len(goalIds) > 0 {
+		goalIdsStr = "(" + goalIdsStr[:len(goalIdsStr)-1] + ")"
+	}
 
 	for _, i := range milestoneIds {
 		milestoneIdsStr += fmt.Sprintf("'%v',", i)
 	}
-	milestoneIdsStr = "(" + milestoneIdsStr[:len(milestoneIdsStr)-1] + ")"
+	if len(milestoneIds) > 0 {
+		milestoneIdsStr = "(" + milestoneIdsStr[:len(milestoneIdsStr)-1] + ")"
+	}
+
+	queryFilter := " false "
+	if goalIdsStr != "" && milestoneIdsStr != "" {
+		queryFilter = `
+		(
+			goal_id in ` + goalIdsStr + `
+			or
+			milestone_id in ` + milestoneIdsStr + `
+		)`
+	} else if goalIdsStr != "" {
+		queryFilter = `goal_id in ` + goalIdsStr
+	} else if milestoneIdsStr != "" {
+		queryFilter = `milestone_id in ` + milestoneIdsStr
+	}
 
 	query := `
 		select *
 		from tasks
 		where
-			(
-				goal_id in ` + goalIdsStr + `
-				or
-				goal_id in ` + milestoneIdsStr + `
-			)
+			` + queryFilter + `
 			and active = 1
 			and completion_date is null
 	`
